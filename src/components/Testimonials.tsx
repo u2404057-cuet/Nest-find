@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { StarFill } from "@gravity-ui/icons";
 
 interface Testimonial {
   id: string;
@@ -73,15 +74,12 @@ export default function Testimonials() {
             >
               <div>
                 {/* Stars */}
-                <div className="flex text-secondary-container mb-4">
+                <div className="flex text-secondary-container mb-4 gap-0.5">
                   {Array.from({ length: t.stars }).map((_, i) => (
-                    <span
+                    <StarFill
                       key={i}
-                      className="material-symbols-outlined"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      star
-                    </span>
+                      className="w-4 h-4 text-secondary-container fill-current"
+                    />
                   ))}
                 </div>
                 <p className="italic text-on-surface dark:text-neutral-300 text-sm leading-relaxed mb-6">
