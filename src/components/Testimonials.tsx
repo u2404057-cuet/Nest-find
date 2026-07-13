@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Testimonial {
   id: string;
@@ -89,10 +90,12 @@ export default function Testimonials() {
               </div>
 
               <div className="flex items-center gap-4 border-t border-gray-50 dark:border-neutral-800/55 pt-4">
-                <img
+                <Image
                   className="w-12 h-12 rounded-full object-cover shrink-0"
                   alt={t.name}
                   src={t.image}
+                  width={48}
+                  height={48}
                 />
                 <div>
                   <h4 className="font-bold text-primary dark:text-neutral-200 text-sm">
