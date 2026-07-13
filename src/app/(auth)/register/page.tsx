@@ -32,16 +32,14 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await signUp.email({
+      await (signUp.email as any)({
         email: data.email,
         password: data.password,
         name: data.fullName,
-        data: {
-          role: data.role,
-        },
+        role: data.role,
         callbackURL: "/",
         fetchOptions: {
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             setErrorMsg(ctx.error.message || "Registration failed. Please try again.");
             setLoading(false);
           },
