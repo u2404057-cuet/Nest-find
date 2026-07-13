@@ -169,6 +169,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Enter your full name"
                   required
+                  suppressHydrationWarning
                   {...register("fullName", { required: true })}
                   className="w-full pl-12 pr-4 py-3 border border-outline-variant bg-surface rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-sans outline-none text-on-surface placeholder:text-outline/50"
                 />
@@ -192,6 +193,7 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="name@example.com"
                   required
+                  suppressHydrationWarning
                   {...register("email", { required: true })}
                   className="w-full pl-12 pr-4 py-3 border border-outline-variant bg-surface rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-sans outline-none text-on-surface placeholder:text-outline/50"
                 />
@@ -215,6 +217,7 @@ export default function RegisterPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
                   required
+                  suppressHydrationWarning
                   {...register("password", { required: true, minLength: 8 })}
                   className="w-full pl-12 pr-[48px] py-3 border border-outline-variant bg-surface rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-sans outline-none text-on-surface placeholder:text-outline/50"
                 />
