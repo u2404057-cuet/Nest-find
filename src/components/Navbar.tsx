@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Bars, Xmark } from "@gravity-ui/icons";
+import logoImg from "@/assets/logo.png";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,9 +24,7 @@ export default function Navbar() {
           <Image
             alt="NestFind Logo"
             className="h-10 w-10 object-contain"
-            width={40}
-            height={40}
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhuLUcHqIqU3iA1w28SsbeTDMTaUEj_UCXyraAcSxYcC2k-oJXKkdFIe5hWsW5eWpqKVJM1sPPXBeh1Os40XSBsKKLPvlw_99UeGwv1tBSclNn0qyyjue6zdKDX_FJNYyxMkKOelRhmOzf-cRvSHpSLya5nBU_VW7JHI22zcrX8Jpp7FxBxaNZTKQp3j57C3xdQ_aYTCfPSZ3gGbalxYhsgtEofGbonD1_0vZ-p4vN8FfvbuGNI5iqFQ"
+            src={logoImg}
           />
           <span className="font-bold text-xl text-primary dark:text-neutral-100 font-sans tracking-tight">
             NestFind
