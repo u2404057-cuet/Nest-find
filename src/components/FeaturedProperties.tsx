@@ -153,7 +153,7 @@ export default function FeaturedProperties() {
                 </div>
 
                 <Button
-                  variant="bordered"
+                  variant="outline"
                   className="w-full border-2 border-primary text-primary dark:border-neutral-400 dark:text-neutral-300 font-bold py-2 rounded-xl hover:bg-primary hover:text-white transition-colors"
                 >
                   View Details
