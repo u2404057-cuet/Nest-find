@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { House } from "@gravity-ui/icons";
 
 interface Agent {
   id: string;
@@ -82,9 +83,7 @@ export default function TopAgents() {
                   {agent.role}
                 </p>
                 <div className="flex items-center gap-1.5 text-secondary font-bold text-sm">
-                  <span className="material-symbols-outlined text-base">
-                    home
-                  </span>
+                  <House className="w-4 h-4" />
                   {agent.listings} Listings
                 </div>
               </div>
