@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface Agent {
   id: string;
@@ -66,10 +67,12 @@ export default function TopAgents() {
               key={agent.id}
               className="bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center gap-6 border border-gray-100 dark:border-neutral-800"
             >
-              <img
+              <Image
                 className="w-24 h-24 rounded-full object-cover shrink-0"
                 alt={agent.name}
                 src={agent.image}
+                width={96}
+                height={96}
               />
               <div>
                 <h3 className="text-lg font-bold text-primary dark:text-neutral-100 mb-1">
