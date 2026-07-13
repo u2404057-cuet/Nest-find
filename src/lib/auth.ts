@@ -13,7 +13,16 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-      baseURL: process.env.BETTER_AUTH_URL, 
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "buyer"
+      }
+    }
+  },
+  baseURL: process.env.BETTER_AUTH_URL, 
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
