@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Magnifier, Calendar, Key } from "@gravity-ui/icons";
 
 interface Step {
   number: string;
@@ -20,13 +21,13 @@ const STEPS: Step[] = [
     number: "2",
     title: "2. Tour",
     description: "Schedule private tours with our expert agents at your convenience, either in-person or virtually.",
-    icon: "calendar_month",
+    icon: "calendar",
   },
   {
     number: "3",
     title: "3. Close",
     description: "Our team handles all documentation and negotiations to ensure a seamless and secure transaction.",
-    icon: "vpn_key",
+    icon: "key",
   },
 ];
 
@@ -47,9 +48,9 @@ export default function HowItWorks() {
           <div key={idx} className="text-center group flex flex-col items-center">
             {/* Icon Wrapper */}
             <div className="w-20 h-20 bg-primary-fixed dark:bg-neutral-800 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <span className="material-symbols-outlined text-primary dark:text-primary-fixed-dim text-4xl">
-                {step.icon}
-              </span>
+              {step.icon === "search" && <Magnifier className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
+              {step.icon === "calendar" && <Calendar className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
+              {step.icon === "key" && <Key className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
             </div>
             {/* Step text */}
             <h3 className="text-xl font-bold text-primary dark:text-neutral-200 mb-3">
