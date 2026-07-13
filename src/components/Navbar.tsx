@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Bars, Xmark } from "@gravity-ui/icons";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,9 +66,11 @@ export default function Navbar() {
             className="md:hidden text-primary dark:text-neutral-200 focus:outline-none"
             aria-label="Toggle menu"
           >
-            <span className="material-symbols-outlined text-2xl">
-              {isMenuOpen ? "close" : "menu"}
-            </span>
+              {isMenuOpen ? (
+                <Xmark className="w-6 h-6" />
+              ) : (
+                <Bars className="w-6 h-6" />
+              )}
           </button>
         </div>
       </div>
