@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
 import Image from "next/image";
+import { MapPin, ArrowRight, LayoutCellsLarge, BroomMotion } from "@gravity-ui/icons";
 
 interface Property {
   id: string;
@@ -93,9 +94,7 @@ export default function FeaturedProperties() {
           href="#"
         >
           View All
-          <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">
-            arrow_forward
-          </span>
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </a>
       </div>
 
@@ -133,9 +132,7 @@ export default function FeaturedProperties() {
                   </span>
                 </div>
                 <p className="text-on-surface-variant text-sm flex items-center mb-4">
-                  <span className="material-symbols-outlined text-sm mr-1">
-                    location_on
-                  </span>
+                  <MapPin className="w-4 h-4 mr-1 text-gray-400" />
                   {property.location}
                 </p>
               </div>
@@ -143,15 +140,11 @@ export default function FeaturedProperties() {
               <div>
                 <div className="flex items-center gap-4 border-t border-gray-100 dark:border-neutral-800 pt-4 mb-4">
                   <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-base text-gray-400">
-                      bed
-                    </span>
+                    <LayoutCellsLarge className="w-4 h-4 text-gray-400" />
                     {property.beds} Beds
                   </span>
                   <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-base text-gray-400">
-                      bathtub
-                    </span>
+                    <BroomMotion className="w-4 h-4 text-gray-400" />
                     {property.baths} Baths
                   </span>
                 </div>
