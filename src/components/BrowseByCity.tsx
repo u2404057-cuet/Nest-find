@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 interface City {
   id: string;
@@ -52,9 +53,12 @@ export default function BrowseByCity() {
               href="#"
             >
               {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
-                style={{ backgroundImage: `url('${city.image}')` }}
+              <Image
+                alt={city.name}
+                src={city.image}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover group-hover:scale-110 transition-transform duration-700"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
