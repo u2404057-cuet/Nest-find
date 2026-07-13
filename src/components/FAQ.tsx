@@ -9,6 +9,7 @@ import {
   AccordionPanel,
   AccordionBody
 } from "@heroui/react";
+import { ChevronDown } from "@gravity-ui/icons";
 
 interface FAQItem {
   question: string;
@@ -46,9 +47,7 @@ export default function FAQ() {
             <AccordionHeading>
               <AccordionTrigger className="w-full flex items-center justify-between text-left font-bold text-primary dark:text-neutral-200 text-base py-4 focus:outline-none cursor-pointer group">
                 <span>{faq.question}</span>
-                <span className="material-symbols-outlined transition-transform duration-300 group-expanded:rotate-180 text-gray-400">
-                  expand_more
-                </span>
+                <ChevronDown className="w-5 h-5 transition-transform duration-300 group-expanded:rotate-180 text-gray-400 shrink-0" />
               </AccordionTrigger>
             </AccordionHeading>
             <AccordionPanel className="overflow-hidden transition-all duration-300 ease-in-out">
