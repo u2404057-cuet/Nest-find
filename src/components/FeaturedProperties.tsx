@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
+import Image from "next/image";
 
 interface Property {
   id: string;
@@ -111,9 +112,12 @@ export default function FeaturedProperties() {
                   New
                 </div>
               )}
-              <div
-                className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
-                style={{ backgroundImage: `url('${property.image}')` }}
+              <Image
+                alt={property.title}
+                src={property.image}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
               />
             </div>
 
