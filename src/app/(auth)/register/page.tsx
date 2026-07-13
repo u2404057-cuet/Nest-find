@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp, signIn } from "@/lib/auth-client";
 import Image from "next/image";
+import { Envelope, Lock, Eye, EyeClosed, Person, Briefcase, ArrowRight } from "@gravity-ui/icons";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -124,9 +125,7 @@ export default function RegisterPage() {
                         : "text-on-surface-variant hover:text-primary"
                     }`}
                   >
-                    <span className="material-symbols-outlined mr-2 text-[18px]">
-                      person
-                    </span>
+                    <Person className="w-4 h-4 mr-2" />
                     Buyer
                   </label>
                 </div>
@@ -146,9 +145,7 @@ export default function RegisterPage() {
                         : "text-on-surface-variant hover:text-primary"
                     }`}
                   >
-                    <span className="material-symbols-outlined mr-2 text-[18px]">
-                      business_center
-                    </span>
+                    <Briefcase className="w-4 h-4 mr-2" />
                     Agent
                   </label>
                 </div>
@@ -165,9 +162,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-lg group-focus-within:text-primary transition-colors">
-                    badge
-                  </span>
+                  <Person className="text-outline w-5 h-5 group-focus-within:text-primary transition-colors" />
                 </div>
                 <input
                   id="fullName"
@@ -190,9 +185,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-lg group-focus-within:text-primary transition-colors">
-                    mail
-                  </span>
+                  <Envelope className="text-outline w-5 h-5 group-focus-within:text-primary transition-colors" />
                 </div>
                 <input
                   id="email"
@@ -215,9 +208,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span className="material-symbols-outlined text-outline text-lg group-focus-within:text-primary transition-colors">
-                    lock
-                  </span>
+                  <Lock className="text-outline w-5 h-5 group-focus-within:text-primary transition-colors" />
                 </div>
                 <input
                   id="password"
@@ -230,11 +221,13 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-on-surface transition-colors"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-on-surface transition-colors justify-center"
                 >
-                  <span className="material-symbols-outlined text-lg">
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
+                  {showPassword ? (
+                    <EyeClosed className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -246,9 +239,7 @@ export default function RegisterPage() {
               className="w-full mt-4 bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-white transition-all active:scale-[0.98] py-3.5 rounded-xl text-sm font-bold shadow-sm flex items-center justify-center cursor-pointer disabled:opacity-50"
             >
               {loading ? "Creating Account..." : "Create Account"}
-              <span className="material-symbols-outlined ml-2 text-lg">
-                arrow_forward
-              </span>
+              <ArrowRight className="ml-2 w-5 h-5" />
             </button>
           </form>
 
