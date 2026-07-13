@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@heroui/react";
 import Link from "next/link";
 
 export default function Navbar() {
@@ -49,13 +48,12 @@ export default function Navbar() {
         {/* Actions / CTA */}
         <div className="flex items-center gap-4">
           <div className="hidden sm:block">
-            <Button
-              as={Link}
+            <Link
               href="#"
-              className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 text-sm"
+              className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 py-2.5 text-sm inline-block text-center"
             >
               Login/Register
-            </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -85,14 +83,13 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-2 border-t border-gray-50 dark:border-neutral-800">
-            <Button
-              as={Link}
+            <Link
               href="#"
-              className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3"
+              className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3 flex justify-center text-sm"
               onClick={() => setIsMenuOpen(false)}
             >
               Login/Register
-            </Button>
+            </Link>
           </div>
         </div>
       )}
