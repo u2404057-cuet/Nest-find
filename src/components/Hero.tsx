@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Button } from "@heroui/react";
+import Image from "next/image";
 
 export default function Hero() {
   const handleSearch = (e: React.FormEvent) => {
@@ -12,15 +13,15 @@ export default function Hero() {
   return (
     <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDETF39B-OOWdG6Iw3cblvRWAsYkyAX-4xyLa1YLFpOO5d6raqHkOm5kIMw3c0q1coAc4Z57YZwIs-las-61tIfeOEekXowUzG-UZs9f7WgZ9TurT8IxNc1OkD3eQVZEAwvW3UEdX5_nBFa3eka8s_AiUPZWL8jTnlE3xz9ocUnZNeAJ02u0dGWISYEUzJ3_5HkfG5IyKbfzhbViETLj2NYJyUXtIJU9zMuH_hb7wdYK3Db-njCM7-QbQ')",
-        }}
+      <Image
+        alt="Modern architectural house at twilight"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDETF39B-OOWdG6Iw3cblvRWAsYkyAX-4xyLa1YLFpOO5d6raqHkOm5kIMw3c0q1coAc4Z57YZwIs-las-61tIfeOEekXowUzG-UZs9f7WgZ9TurT8IxNc1OkD3eQVZEAwvW3UEdX5_nBFa3eka8s_AiUPZWL8jTnlE3xz9ocUnZNeAJ02u0dGWISYEUzJ3_5HkfG5IyKbfzhbViETLj2NYJyUXtIJU9zMuH_hb7wdYK3Db-njCM7-QbQ"
+        fill
+        priority
+        className="object-cover"
       />
       {/* Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#000f22]/50 to-[#000f22]/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#000f22]/50 to-[#000f22]/80 z-0" />
 
       {/* Hero Content */}
       <div className="relative z-10 w-full max-w-5xl px-6 text-center text-white">
