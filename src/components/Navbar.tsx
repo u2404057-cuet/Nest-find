@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           <div className="hidden sm:block">
             <Link
-              href="#"
+              href="/login"
               className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 py-2.5 text-sm inline-block text-center"
             >
               Login/Register
@@ -84,7 +84,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2 border-t border-gray-50 dark:border-neutral-800">
             <Link
-              href="#"
+              href="/login"
               className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3 flex justify-center text-sm"
               onClick={() => setIsMenuOpen(false)}
             >
