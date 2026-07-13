@@ -39,14 +39,15 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = () => {
-    setValue("email", "demo.user@nestfind.com");
-    setValue("password", "password123");
-    
-    // Auto-trigger submit after autofill
-    setTimeout(() => {
-      handleSubmit(onSubmit)();
-    }, 100);
+  const handleSocialLogin = async (provider: "google") => {
+    try {
+      await signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (err) {
+      console.error("Social login failed", err);
+    }
   };
 
   return (
@@ -146,23 +147,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center space-x-2 px-1">
-              <input
-                id="remember"
-                type="checkbox"
-                className="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary accent-primary"
-              />
-              <label
-                className="text-xs text-on-surface-variant cursor-pointer select-none font-medium"
-                htmlFor="remember"
-              >
-                Remember me for 30 days
-              </label>
-            </div>
-
             {/* Actions */}
-            <div className="pt-2 space-y-3">
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={loading}
@@ -170,15 +156,34 @@ export default function LoginPage() {
               >
                 {loading ? "Logging in..." : "Login"}
               </button>
-              <button
-                type="button"
-                onClick={handleDemoLogin}
-                className="w-full bg-surface-container-low text-on-surface font-semibold py-3.5 rounded-xl hover:bg-surface-container-high active:scale-[0.98] transition-all duration-200 border border-outline-variant/30 cursor-pointer"
-              >
-                Demo Login
-              </button>
             </div>
           </form>
+
+          {/* Social Links */}
+          <div className="mt-6 flex flex-col items-center">
+            <div className="w-full flex items-center mb-4">
+              <div className="flex-1 h-[1px] bg-outline-variant/60"></div>
+              <span className="px-4 text-[10px] font-semibold text-outline uppercase tracking-wider">
+                Or login with
+              </span>
+              <div className="flex-1 h-[1px] bg-outline-variant/60"></div>
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => handleSocialLogin("google")}
+              className="w-full py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
+            >
+              <Image
+                className="w-5 h-5 mr-2"
+                alt="Google"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtyud7weRO52XtYefeQ-K8IhkjCl2foHkfi43TbHH8VNjgRg8c0WSJDbMPMKHMR_6fUXEgNCCo9kflipU6Swatiqy742DltUR3xKYXBVXDgBfrkTdWW79J04ng4DwLZxZvAqAKEIdJPQxh7f4uo7nSfbotdWoELAcZllRW17jI5-G73KhSks9a0Jl7PaLbO29GHNsnfwyH1eTZu3fBKCEs9CjuVlYjb8vM0mCSAxp3MacSwbd0ql4k_A"
+                width={20}
+                height={20}
+              />
+              <span className="text-xs font-semibold text-primary">Google</span>
+            </button>
+          </div>
 
           {/* Register Link */}
           <div className="mt-8 text-center">
