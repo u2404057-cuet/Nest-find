@@ -1,16 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Navbar as HeroNavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-  Button
-} from "@heroui/react";
+import { Button } from "@heroui/react";
 import Link from "next/link";
 
 export default function Navbar() {
@@ -24,86 +15,88 @@ export default function Navbar() {
   ];
 
   return (
-    <HeroNavbar
-      isBordered
-      isMenuOpen={isMenuOpen}
-      onMenuOpenChange={setIsMenuOpen}
-      className="bg-surface/90 backdrop-blur-md sticky top-0 z-50 shadow-[0_4px_20px_rgba(10,37,64,0.05)] border-b border-surface-container"
-      maxWidth="xl"
-    >
-      <NavbarContent className="pr-3" justify="start">
-        <NavbarBrand className="flex items-center gap-2">
+    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md shadow-[0_4px_20px_rgba(10,37,64,0.05)] border-b border-gray-100 dark:border-neutral-800">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Brand/Logo */}
+        <div className="flex items-center gap-2">
           <img
             alt="NestFind Logo"
             className="h-10 w-10 object-contain"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhuLUcHqIqU3iA1w28SsbeTDMTaUEj_UCXyraAcSxYcC2k-oJXKkdFIe5hWsW5eWpqKVJM1sPPXBeh1Os40XSBsKKLPvlw_99UeGwv1tBSclNn0qyyjue6zdKDX_FJNYyxMkKOelRhmOzf-cRvSHpSLya5nBU_VW7JHI22zcrX8Jpp7FxBxaNZTKQp3j57C3xdQ_aYTCfPSZ3gGbalxYhsgtEofGbonD1_0vZ-p4vN8FfvbuGNI5iqFQ"
           />
-          <span className="font-bold text-xl text-primary font-sans tracking-tight">
+          <span className="font-bold text-xl text-primary dark:text-neutral-100 font-sans tracking-tight">
             NestFind
           </span>
-        </NavbarBrand>
-      </NavbarContent>
+        </div>
 
-      <NavbarContent className="hidden md:flex gap-8" justify="center">
-        {menuItems.map((item, index) => (
-          <NavbarItem key={index}>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          {menuItems.map((item, index) => (
             <Link
+              key={index}
               href={item.href}
               className={`text-sm font-medium transition-colors hover:text-secondary ${
                 item.active
-                  ? "text-primary border-b-2 border-secondary-container pb-1"
-                  : "text-on-surface-variant"
+                  ? "text-primary dark:text-neutral-100 border-b-2 border-secondary-container pb-1"
+                  : "text-on-surface-variant dark:text-neutral-400"
               }`}
             >
               {item.name}
             </Link>
-          </NavbarItem>
-        ))}
-      </NavbarContent>
+          ))}
+        </div>
 
-      <NavbarContent justify="end">
-        <NavbarItem className="hidden sm:flex">
-          <Button
-            as={Link}
-            color="primary"
-            href="#"
-            variant="solid"
-            className="bg-primary text-on-primary rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6"
+        {/* Actions / CTA */}
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:block">
+            <Button
+              as={Link}
+              href="#"
+              className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 text-sm"
+            >
+              Login/Register
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden text-primary dark:text-neutral-200 focus:outline-none"
+            aria-label="Toggle menu"
           >
-            Login/Register
-          </Button>
-        </NavbarItem>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="md:hidden text-primary"
-        />
-      </NavbarContent>
+            <span className="material-symbols-outlined text-2xl">
+              {isMenuOpen ? "close" : "menu"}
+            </span>
+          </button>
+        </div>
+      </div>
 
-      <NavbarMenu className="bg-surface/95 backdrop-blur-md pt-6 px-6">
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item.name}-${index}`}>
+      {/* Mobile Menu Panel */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-800 py-4 px-6 flex flex-col gap-4 animate-fade-in">
+          {menuItems.map((item, index) => (
             <Link
-              className="w-full text-lg py-2 block text-primary hover:text-secondary"
+              key={index}
               href={item.href}
               onClick={() => setIsMenuOpen(false)}
+              className="text-base font-semibold text-primary dark:text-neutral-200 hover:text-secondary py-1"
             >
               {item.name}
             </Link>
-          </NavbarMenuItem>
-        ))}
-        <NavbarMenuItem className="pt-4">
-          <Button
-            as={Link}
-            color="primary"
-            href="#"
-            variant="solid"
-            className="w-full bg-primary text-on-primary rounded-xl font-semibold py-3"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login/Register
-          </Button>
-        </NavbarMenuItem>
-      </NavbarMenu>
-    </HeroNavbar>
+          ))}
+          <div className="pt-2 border-t border-gray-50 dark:border-neutral-800">
+            <Button
+              as={Link}
+              href="#"
+              className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Login/Register
+            </Button>
+          </div>
+        </div>
+      )}
+    </nav>
   );
 }
+
