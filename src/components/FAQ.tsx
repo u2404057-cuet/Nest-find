@@ -31,7 +31,7 @@ export default function FAQ() {
       </h2>
 
       <Accordion
-        variant="splitted"
+        variant="surface"
         className="px-0"
         itemClasses={{
           base: "bg-white dark:bg-neutral-900 border border-gray-150 dark:border-neutral-800 rounded-2xl shadow-sm mb-4 px-4",
