@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -57,10 +58,12 @@ export default function LoginPage() {
           
           {/* Logo Section */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 mb-4">
-              <img
+            <div className="w-16 h-16 mb-4 relative">
+              <Image
                 alt="NestFind Logo"
-                className="w-full h-full object-contain"
+                className="object-contain"
+                fill
+                priority
                 src="https://lh3.googleusercontent.com/aida/AP1WRLuC7aeE-A47qGeUoQuP0iai-m3BX7uJvbBqmqJ8YShza8Pq3Y2jJJxsKPOr04GzPCRgEbWm2my2i77taDicQ4RFSrvvLtma17fxej_54PuDqU7Qb5wTlMLm-QhP1b50522JELl_-9Tcip41iUc9HNwVjoUTGSCUz0DJNjt6Zjl_Q0DtPjXjHpQ3WfQJ8jGmMOo0Z7QMYrp9pTOE2AsQBk-nxYT6Lr1RY3p4WTyFUHfQaQif_g2XYFgOYsiC"
               />
             </div>
