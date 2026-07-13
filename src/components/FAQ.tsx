@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Accordion, AccordionItem } from "@heroui/react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionHeading,
+  AccordionTrigger,
+  AccordionPanel,
+  AccordionBody
+} from "@heroui/react";
 
 interface FAQItem {
   question: string;
@@ -30,26 +37,28 @@ export default function FAQ() {
         Frequently Asked Questions
       </h2>
 
-      <Accordion
-        variant="surface"
-        className="px-0"
-        itemClasses={{
-          base: "bg-white dark:bg-neutral-900 border border-gray-150 dark:border-neutral-800 rounded-2xl shadow-sm mb-4 px-4",
-          title: "font-bold text-primary dark:text-neutral-200 text-base py-4",
-          content: "text-on-surface-variant text-sm border-t border-gray-100 dark:border-neutral-800/80 pt-4 pb-4 leading-relaxed",
-          trigger: "hover:bg-gray-50 dark:hover:bg-neutral-800/50 rounded-xl px-2",
-        }}
-      >
+      <div className="flex flex-col gap-4">
         {FAQS.map((faq, idx) => (
           <AccordionItem
             key={idx}
-            aria-label={faq.question}
-            title={faq.question}
+            className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl shadow-sm px-6 py-2 transition-all hover:border-gray-300 dark:hover:border-neutral-700"
           >
-            {faq.answer}
+            <AccordionHeading>
+              <AccordionTrigger className="w-full flex items-center justify-between text-left font-bold text-primary dark:text-neutral-200 text-base py-4 focus:outline-none cursor-pointer group">
+                <span>{faq.question}</span>
+                <span className="material-symbols-outlined transition-transform duration-300 group-expanded:rotate-180 text-gray-400">
+                  expand_more
+                </span>
+              </AccordionTrigger>
+            </AccordionHeading>
+            <AccordionPanel className="overflow-hidden transition-all duration-300 ease-in-out">
+              <AccordionBody className="text-on-surface-variant dark:text-neutral-400 text-sm border-t border-gray-100 dark:border-neutral-800 pt-4 pb-4 leading-relaxed">
+                {faq.answer}
+              </AccordionBody>
+            </AccordionPanel>
           </AccordionItem>
         ))}
-      </Accordion>
+      </div>
     </section>
   );
 }
