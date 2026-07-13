@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUp, signIn } from "@/lib/auth-client";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -80,10 +81,12 @@ export default function RegisterPage() {
           
           {/* Branding Header */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 mb-4">
-              <img
+            <div className="w-16 h-16 mb-4 relative">
+              <Image
                 alt="NestFind Logo"
-                className="w-full h-full object-contain"
+                className="object-contain"
+                fill
+                priority
                 src="https://lh3.googleusercontent.com/aida/AP1WRLuC7aeE-A47qGeUoQuP0iai-m3BX7uJvbBqmqJ8YShza8Pq3Y2jJJxsKPOr04GzPCRgEbWm2my2i77taDicQ4RFSrvvLtma17fxej_54PuDqU7Qb5wTlMLm-QhP1b50522JELl_-9Tcip41iUc9HNwVjoUTGSCUz0DJNjt6Zjl_Q0DtPjXjHpQ3WfQJ8jGmMOo0Z7QMYrp9pTOE2AsQBk-nxYT6Lr1RY3p4WTyFUHfQaQif_g2XYFgOYsiC"
               />
             </div>
@@ -296,10 +299,12 @@ export default function RegisterPage() {
                 onClick={() => handleSocialSignUp("google")}
                 className="flex-1 py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
               >
-                <img
+                <Image
                   className="w-5 h-5 mr-2"
                   alt="Google"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtyud7weRO52XtYefeQ-K8IhkjCl2foHkfi43TbHH8VNjgRg8c0WSJDbMPMKHMR_6fUXEgNCCo9kflipU6Swatiqy742DltUR3xKYXBVXDgBfrkTdWW79J04ng4DwLZxZvAqAKEIdJPQxh7f4uo7nSfbotdWoELAcZllRW17jI5-G73KhSks9a0Jl7PaLbO29GHNsnfwyH1eTZu3fBKCEs9CjuVlYjb8vM0mCSAxp3MacSwbd0ql4k_A"
+                  width={20}
+                  height={20}
                 />
                 <span className="text-xs font-semibold text-primary">Google</span>
               </button>
@@ -307,10 +312,12 @@ export default function RegisterPage() {
                 type="button"
                 className="flex-1 py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
               >
-                <img
+                <Image
                   className="w-5 h-5 mr-2"
                   alt="Apple"
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1twG0UfyJBY7WTId4LEd7lDEQ-_odJrrJTVf-cADT-rEdwh2zqod0X6gEibe_E4Juz8WAMyImI1kJbD_p1c10aoctYkEJhX35Ovor4tXvEJNxfTPb884V9xprla5hAGWWPTbjF22HUb1YglLBHQoXAsfFh_nrTO3shTTDTjKHjQiosaZHDrYmJW-MtdX0VjQ_lLahSfxnviKwbGwqXcBiFPc9CiRljZ0FCzRLxQ1NQqO30m4m4oE98Q"
+                  width={20}
+                  height={20}
                 />
                 <span className="text-xs font-semibold text-primary">Apple</span>
               </button>
