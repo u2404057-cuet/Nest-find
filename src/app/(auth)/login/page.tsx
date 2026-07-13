@@ -100,6 +100,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="name@example.com"
                   required
+                  suppressHydrationWarning
                   {...register("email", { required: true })}
                   className="w-full pl-12 pr-4 py-3 bg-background border border-outline-variant rounded-xl text-sm font-sans focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-on-surface placeholder:text-outline/50"
                 />
@@ -129,6 +130,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   required
+                  suppressHydrationWarning
                   {...register("password", { required: true })}
                   className="w-full pl-12 pr-12 py-3 bg-background border border-outline-variant rounded-xl text-sm font-sans focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none text-on-surface placeholder:text-outline/50"
                 />
