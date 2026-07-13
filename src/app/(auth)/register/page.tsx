@@ -15,7 +15,6 @@ export default function RegisterPage() {
       fullName: "",
       email: "",
       password: "",
-      terms: false,
     }
   });
 
@@ -25,10 +24,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: any) => {
-    if (!data.terms) {
-      setErrorMsg("You must agree to the Terms of Service and Privacy Policy.");
-      return;
-    }
     setErrorMsg("");
     setLoading(true);
 
@@ -244,32 +239,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Terms */}
-            <div className="flex items-start pt-1">
-              <div className="flex items-center h-5">
-                <input
-                  id="terms"
-                  type="checkbox"
-                  {...register("terms", { required: true })}
-                  className="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary accent-primary"
-                />
-              </div>
-              <label
-                className="ml-3 text-xs text-on-surface-variant leading-relaxed font-medium"
-                htmlFor="terms"
-              >
-                I agree to the{" "}
-                <Link className="text-primary font-bold hover:underline" href="#">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link className="text-primary font-bold hover:underline" href="#">
-                  Privacy Policy
-                </Link>
-                .
-              </label>
-            </div>
-
             {/* CTA Button */}
             <button
               type="submit"
@@ -293,35 +262,20 @@ export default function RegisterPage() {
               <div className="flex-1 h-[1px] bg-outline-variant/60"></div>
             </div>
             
-            <div className="flex gap-4 w-full">
-              <button
-                type="button"
-                onClick={() => handleSocialSignUp("google")}
-                className="flex-1 py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
-              >
-                <Image
-                  className="w-5 h-5 mr-2"
-                  alt="Google"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtyud7weRO52XtYefeQ-K8IhkjCl2foHkfi43TbHH8VNjgRg8c0WSJDbMPMKHMR_6fUXEgNCCo9kflipU6Swatiqy742DltUR3xKYXBVXDgBfrkTdWW79J04ng4DwLZxZvAqAKEIdJPQxh7f4uo7nSfbotdWoELAcZllRW17jI5-G73KhSks9a0Jl7PaLbO29GHNsnfwyH1eTZu3fBKCEs9CjuVlYjb8vM0mCSAxp3MacSwbd0ql4k_A"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs font-semibold text-primary">Google</span>
-              </button>
-              <button
-                type="button"
-                className="flex-1 py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
-              >
-                <Image
-                  className="w-5 h-5 mr-2"
-                  alt="Apple"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1twG0UfyJBY7WTId4LEd7lDEQ-_odJrrJTVf-cADT-rEdwh2zqod0X6gEibe_E4Juz8WAMyImI1kJbD_p1c10aoctYkEJhX35Ovor4tXvEJNxfTPb884V9xprla5hAGWWPTbjF22HUb1YglLBHQoXAsfFh_nrTO3shTTDTjKHjQiosaZHDrYmJW-MtdX0VjQ_lLahSfxnviKwbGwqXcBiFPc9CiRljZ0FCzRLxQ1NQqO30m4m4oE98Q"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-xs font-semibold text-primary">Apple</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleSocialSignUp("google")}
+              className="w-full py-3 border border-outline-variant rounded-xl flex items-center justify-center hover:bg-surface-container transition-colors cursor-pointer bg-transparent"
+            >
+              <Image
+                className="w-5 h-5 mr-2"
+                alt="Google"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtyud7weRO52XtYefeQ-K8IhkjCl2foHkfi43TbHH8VNjgRg8c0WSJDbMPMKHMR_6fUXEgNCCo9kflipU6Swatiqy742DltUR3xKYXBVXDgBfrkTdWW79J04ng4DwLZxZvAqAKEIdJPQxh7f4uo7nSfbotdWoELAcZllRW17jI5-G73KhSks9a0Jl7PaLbO29GHNsnfwyH1eTZu3fBKCEs9CjuVlYjb8vM0mCSAxp3MacSwbd0ql4k_A"
+                width={20}
+                height={20}
+              />
+              <span className="text-xs font-semibold text-primary">Google</span>
+            </button>
 
             <div className="mt-6 text-center">
               <p className="text-xs text-on-surface-variant font-medium">
