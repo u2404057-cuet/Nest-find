@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 import Image from "next/image";
+import { Envelope, Lock, Eye, EyeClosed } from "@gravity-ui/icons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -93,9 +94,7 @@ export default function LoginPage() {
                 Email Address
               </label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">
-                  mail
-                </span>
+                <Envelope className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input
                   id="email"
                   type="email"
@@ -124,9 +123,7 @@ export default function LoginPage() {
                 </Link>
               </div>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline text-lg">
-                  lock
-                </span>
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -138,11 +135,13 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors flex items-center justify-center"
                 >
-                  <span className="material-symbols-outlined text-lg">
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
+                  {showPassword ? (
+                    <EyeClosed className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
