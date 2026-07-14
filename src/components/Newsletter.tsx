@@ -52,20 +52,21 @@ export default function Newsletter() {
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <Button className="hidden">Hidden Trigger</Button>
-        <ModalBackdrop variant="blur" />
-        <ModalContainer placement="center">
-          <ModalDialog>
-            <ModalHeader>Subscription Successful</ModalHeader>
-            <ModalBody>
-              Thank you for subscribing! You will receive property alerts soon.
-            </ModalBody>
-            <ModalFooter>
-              <Button className="bg-primary text-white" onPress={() => setIsOpen(false)}>
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalDialog>
-        </ModalContainer>
+        <ModalBackdrop variant="blur">
+          <ModalContainer placement="center">
+            <ModalDialog>
+              <ModalHeader>Subscription Successful</ModalHeader>
+              <ModalBody>
+                Thank you for subscribing! You will receive property alerts soon.
+              </ModalBody>
+              <ModalFooter>
+                <Button className="bg-primary text-white" onPress={() => setIsOpen(false)}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
     </section>
   );

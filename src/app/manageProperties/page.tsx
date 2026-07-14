@@ -160,25 +160,26 @@ export default function ManagePropertiesPage() {
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <Button className="hidden">Hidden Trigger</Button>
-        <ModalBackdrop variant="blur" />
-        <ModalContainer placement="center">
-          <ModalDialog>
-            <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
-            <ModalBody>
-              <p className="text-on-surface-variant text-sm">
-                Are you sure you want to delete this listing? This action cannot be undone.
-              </p>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" onPress={() => setIsOpen(false)}>
-                Cancel
-              </Button>
-              <Button className="bg-red-600 text-white" onPress={() => { handleDelete(); }}>
-                Delete
-              </Button>
-            </ModalFooter>
-          </ModalDialog>
-        </ModalContainer>
+        <ModalBackdrop variant="blur">
+          <ModalContainer placement="center">
+            <ModalDialog>
+              <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
+              <ModalBody>
+                <p className="text-on-surface-variant text-sm">
+                  Are you sure you want to delete this listing? This action cannot be undone.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="ghost" onPress={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button className="bg-red-600 text-white" onPress={() => { handleDelete(); }}>
+                  Delete
+                </Button>
+              </ModalFooter>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
 
       <main className="flex-grow max-w-7xl mx-auto px-6 py-12 w-full">
