@@ -53,23 +53,15 @@ export default function PropertyDetailPage({ params }: PageProps) {
   const unwrappedParams = use(params);
   const { id } = unwrappedParams;
 
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const [property, setProperty] = useState<Property | null>(null);
+  const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
 
-  // Authentication guard
+  // Fetch property details & related items
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push(`/login?callbackURL=/properties/${id}`);
-    }
-  }, [session, isPending, router, id]);
-
-  // Fetch property details
-  useEffect(() => {
-    if (!session) return;
-
     setLoading(true);
     fetch(`http://localhost:8000/api/properties/${id}`)
       .then((res) => {
@@ -92,17 +84,30 @@ export default function PropertyDetailPage({ params }: PageProps) {
       .finally(() => {
         setLoading(false);
       });
-  }, [id, session]);
 
-  // Loading state (while auth or data is checking)
-  if (isPending || (!session && !error)) {
+    // Fetch related properties
+    fetch("http://localhost:8000/api/properties")
+      .then((res) => {
+        if (res.ok) return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const filtered = data.filter((item: any) => item.id !== id).slice(0, 3);
+          setRelatedProperties(filtered);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch related properties:", err));
+  }, [id]);
+
+  // Loading state
+  if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-background text-on-surface">
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent dark:border-neutral-200 dark:border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-pulse font-medium">
-            Verifying secure session...
+          <p className="text-sm text-on-surface-variant animate-pulse font-medium">
+            Loading property details...
           </p>
         </div>
         <Footer />
@@ -302,6 +307,53 @@ export default function PropertyDetailPage({ params }: PageProps) {
                   ))}
                 </div>
               </div>
+
+              {/* Reviews & Ratings */}
+              <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                <div className="flex justify-between items-center mb-6 border-b border-outline-variant/10 pb-3">
+                  <h3 className="text-xl font-bold text-primary">
+                    Reviews & Ratings
+                  </h3>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-secondary">4.8</span>
+                    <span className="text-xs text-on-surface-variant">(2 reviews)</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-6">
+                  {[
+                    {
+                      id: "1",
+                      author: "Sarah Jenkins",
+                      rating: 5,
+                      date: "June 12, 2026",
+                      comment: "Stunning property with exceptional finishes. The location is incredibly convenient and the neighborhood is very peaceful."
+                    },
+                    {
+                      id: "2",
+                      author: "David Miller",
+                      rating: 4,
+                      date: "May 28, 2026",
+                      comment: "Very spacious apartment. The bathrooms are modern and the natural light in the living room is fantastic. Highly recommended."
+                    }
+                  ].map((rev) => (
+                    <div key={rev.id} className="border-b border-outline-variant/10 pb-6 last:border-0 last:pb-0">
+                      <div className="flex justify-between items-start gap-2 mb-2">
+                        <div>
+                          <h4 className="text-sm font-bold text-primary">{rev.author}</h4>
+                          <span className="text-[11px] text-on-surface-variant">{rev.date}</span>
+                        </div>
+                        <div className="flex items-center gap-0.5 bg-secondary-container/20 px-2 py-0.5 rounded text-secondary font-bold text-xs">
+                          {rev.rating} ★
+                        </div>
+                      </div>
+                      <p className="text-sm text-on-surface-variant font-normal leading-relaxed">
+                        {rev.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Right Column: Contact Widget */}
@@ -361,6 +413,57 @@ export default function PropertyDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+
+          {/* Related Items Section */}
+          {relatedProperties.length > 0 && (
+            <div className="mt-16 pt-10 border-t border-outline-variant/20">
+              <h3 className="text-2xl font-bold text-primary mb-8">
+                Related Properties
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {relatedProperties.map((item) => (
+                  <div
+                    key={item.id}
+                    className="group bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.02)] hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-outline-variant/30 flex flex-col justify-between"
+                  >
+                    {/* Card Image */}
+                    <div className="h-44 overflow-hidden relative">
+                      <Image
+                        alt={item.title}
+                        src={item.image}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    {/* Card Content */}
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start mb-2 gap-2">
+                          <h4 className="font-bold text-base text-primary line-clamp-1">
+                            {item.title}
+                          </h4>
+                          <span className="text-secondary font-extrabold text-sm shrink-0">
+                            ${item.price.toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-on-surface-variant text-xs flex items-center mb-4">
+                          <MapPin className="w-3.5 h-3.5 mr-1 text-neutral-400" />
+                          {item.location}
+                        </p>
+                      </div>
+                      <Link
+                        href={`/properties/${item.id}`}
+                        className="w-full border-2 border-primary text-primary font-bold py-2 rounded-xl hover:bg-primary hover:text-white transition-colors block text-center text-xs"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </main>
       )}
 
