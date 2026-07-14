@@ -84,14 +84,6 @@ export default function Hero() {
             Search
           </Button>
         </form>
-
-        {/* Scroll affordance */}
-        <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center opacity-70 mt-6">
-          <span className="text-xs tracking-wider uppercase font-semibold">
-            Scroll to explore
-          </span>
-          <span className="material-symbols-outlined">expand_more</span>
-        </div>
       </div>
     </section>
   );

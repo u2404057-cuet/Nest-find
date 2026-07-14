@@ -56,15 +56,25 @@ export default function Navbar() {
           {isPending ? (
             <div className="hidden sm:block w-24 h-10 bg-surface-container animate-pulse rounded-xl" />
           ) : user ? (
-            <div className="hidden sm:flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
-                  {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
-                </div>
-                <span className="hidden lg:inline text-xs font-semibold text-primary dark:text-neutral-200">
-                  {user?.name || user?.email}
-                </span>
-              </div>
+             <div className="hidden sm:flex items-center gap-3">
+               <div className="flex items-center gap-2">
+                 {user?.image ? (
+                   <Image
+                     src={user.image}
+                     alt={user.name || "User Avatar"}
+                     width={32}
+                     height={32}
+                     className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-neutral-700"
+                   />
+                 ) : (
+                   <div className="w-8 h-8 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
+                     {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
+                   </div>
+                 )}
+                 <span className="hidden sm:inline-block text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                   {user?.name || user?.email}
+                 </span>
+               </div>
               <button
                 onClick={async () => {
                   await authClient.signOut();
@@ -119,19 +129,29 @@ export default function Navbar() {
               <div className="w-full h-12 bg-surface-container animate-pulse rounded-xl" />
             ) : user ? (
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 px-1 py-2">
-                  <div className="w-9 h-9 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
-                    {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-primary dark:text-neutral-200">
-                      {user?.name || "User"}
-                    </span>
-                    <span className="text-xs text-on-surface-variant/70 dark:text-neutral-400">
-                      {user?.email}
-                    </span>
-                  </div>
-                </div>
+                 <div className="flex items-center gap-3 px-1 py-2">
+                   {user?.image ? (
+                     <Image
+                       src={user.image}
+                       alt={user.name || "User Avatar"}
+                       width={36}
+                       height={36}
+                       className="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-neutral-700"
+                     />
+                   ) : (
+                     <div className="w-9 h-9 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
+                       {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
+                     </div>
+                   )}
+                   <div className="flex flex-col">
+                     <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                       {user?.name || "User"}
+                     </span>
+                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                       {user?.email}
+                     </span>
+                   </div>
+                 </div>
                 <button
                   onClick={async () => {
                     setIsMenuOpen(false);
