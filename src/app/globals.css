@@ -21,13 +21,4 @@
   --color-on-primary-fixed: #001c37;
   --color-primary-fixed: #d2e4ff;
   --color-primary-fixed-dim: #b0c8eb;
-  
-  --spacing-container-max: 1280px;
-  --spacing-lg: 40px;
-  --spacing-md: 24px;
-  --spacing-sm: 16px;
-  --spacing-xs: 8px;
-  --spacing-gutter: 24px;
-  --spacing-base: 4px;
-  --spacing-xl: 64px;
 }
