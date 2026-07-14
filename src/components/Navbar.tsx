@@ -5,9 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Bars, Xmark } from "@gravity-ui/icons";
 import logoImg from "@/assets/logo.png";
+import { useSession, authClient } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: sessionData, isPending } = useSession();
+  const user = sessionData?.user;
 
   const menuItems = [
     { name: "Home", href: "#", active: true },
@@ -50,14 +53,39 @@ export default function Navbar() {
 
         {/* Actions / CTA */}
         <div className="flex items-center gap-4">
-          <div className="hidden sm:block">
-            <Link
-              href="/login"
-              className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 py-2.5 text-sm inline-block text-center"
-            >
-              Login/Register
-            </Link>
-          </div>
+          {isPending ? (
+            <div className="hidden sm:block w-24 h-10 bg-surface-container animate-pulse rounded-xl" />
+          ) : user ? (
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
+                  {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
+                </div>
+                <span className="hidden lg:inline text-xs font-semibold text-primary dark:text-neutral-200">
+                  {user?.name || user?.email}
+                </span>
+              </div>
+              <button
+                onClick={async () => {
+                  await authClient.signOut({
+                    callbackURL: "/",
+                  });
+                }}
+                className="bg-surface-container hover:bg-red-50 hover:text-red-600 dark:bg-neutral-850 dark:hover:bg-red-950/40 dark:hover:text-red-400 text-on-surface-variant rounded-xl font-semibold active:scale-[0.98] transition-all px-4 py-2.5 text-xs cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="hidden sm:block">
+              <Link
+                href="/login"
+                className="bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 active:scale-[0.98] transition-all px-6 py-2.5 text-sm inline-block text-center"
+              >
+                Login/Register
+              </Link>
+            </div>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -88,13 +116,44 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="pt-2 border-t border-gray-50 dark:border-neutral-800">
-            <Link
-              href="/login"
-              className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3 flex justify-center text-sm"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Login/Register
-            </Link>
+            {isPending ? (
+              <div className="w-full h-12 bg-surface-container animate-pulse rounded-xl" />
+            ) : user ? (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3 px-1 py-2">
+                  <div className="w-9 h-9 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm uppercase">
+                    {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-primary dark:text-neutral-200">
+                      {user?.name || "User"}
+                    </span>
+                    <span className="text-xs text-on-surface-variant/70 dark:text-neutral-400">
+                      {user?.email}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    setIsMenuOpen(false);
+                    await authClient.signOut({
+                      callbackURL: "/",
+                    });
+                  }}
+                  className="w-full bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/50 rounded-xl font-semibold py-3 flex justify-center text-sm cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="w-full bg-primary text-on-primary dark:bg-neutral-100 dark:text-neutral-900 rounded-xl font-semibold py-3 flex justify-center text-sm"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login/Register
+              </Link>
+            )}
           </div>
         </div>
       )}
