@@ -32,13 +32,14 @@ interface Property {
     address?: string;
     lat?: number;
     lng?: number;
-  };
+  } | string;
   bedrooms: number;
   bathrooms: number;
   areaSqft: number;
   yearBuilt: number;
   amenities: string[];
   images: string[];
+  image?: string;
   status: string;
   views: number;
   featured: boolean;
@@ -59,6 +60,12 @@ export default function PropertyDetailPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+
+  const displayLocation: string = property
+    ? (typeof property.location === "string"
+      ? property.location
+      : (property.location.address || `${property.location.area || ""}, ${property.location.city || ""}`))
+    : "";
 
   // Fetch property details & related items
   useEffect(() => {
@@ -177,7 +184,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
               </h1>
               <p className="flex items-center text-sm text-on-surface-variant mt-2 font-medium">
                 <MapPin className="w-4 h-4 mr-1.5 text-neutral-400 shrink-0" />
-                {property.location.address || `${property.location.area}, ${property.location.city}`}
+                {displayLocation}
               </p>
             </div>
             <div className="text-left md:text-right shrink-0 bg-surface-container-lowest px-6 py-4 rounded-2xl border border-outline-variant/30 shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
@@ -430,7 +437,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
                     <div className="h-44 overflow-hidden relative">
                       <Image
                         alt={item.title}
-                        src={item.image}
+                        src={item.image || (item.images && item.images[0]) || "/placeholder.jpg"}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -449,7 +456,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
                         </div>
                         <p className="text-on-surface-variant text-xs flex items-center mb-4">
                           <MapPin className="w-3.5 h-3.5 mr-1 text-neutral-400" />
-                          {item.location}
+                          {typeof item.location === "string" ? item.location : (item.location.address || `${item.location.area || ""}, ${item.location.city || ""}`)}
                         </p>
                       </div>
                       <Link
