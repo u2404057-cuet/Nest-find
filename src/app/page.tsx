@@ -25,7 +25,7 @@ export default function Home() {
         <Stats />
 
         {/* Featured Houses */}
-        <FeaturedProperties />
+        <FeaturedProperties limit={4} />
 
         {/* City Categories */}
         <BrowseByCity />
