@@ -160,7 +160,8 @@ export default function ManagePropertiesPage() {
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <Button className="hidden">Hidden Trigger</Button>
-        <ModalContainer>
+        <ModalBackdrop variant="blur" />
+        <ModalContainer placement="center">
           <ModalDialog>
             <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
             <ModalBody>

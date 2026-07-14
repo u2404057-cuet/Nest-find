@@ -52,7 +52,8 @@ export default function Newsletter() {
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <Button className="hidden">Hidden Trigger</Button>
-        <ModalContainer>
+        <ModalBackdrop variant="blur" />
+        <ModalContainer placement="center">
           <ModalDialog>
             <ModalHeader>Subscription Successful</ModalHeader>
             <ModalBody>
