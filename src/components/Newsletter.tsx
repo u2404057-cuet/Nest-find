@@ -51,7 +51,7 @@ export default function Newsletter() {
       </div>
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-        <ModalBackdrop />
+        <Button className="hidden">Hidden Trigger</Button>
         <ModalContainer>
           <ModalDialog>
             <ModalHeader>Subscription Successful</ModalHeader>

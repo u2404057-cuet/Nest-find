@@ -159,7 +159,7 @@ export default function ManagePropertiesPage() {
       <Navbar />
 
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-        <ModalBackdrop />
+        <Button className="hidden">Hidden Trigger</Button>
         <ModalContainer>
           <ModalDialog>
             <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
