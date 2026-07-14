@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MapPin, LayoutCellsLarge, BroomMotion } from "@gravity-ui/icons";
@@ -18,81 +19,187 @@ interface Property {
   image: string;
 }
 
-export default function PropertiesPage() {
+const CATEGORIES = [
+  { value: "all", label: "All Types" },
+  { value: "apartment", label: "Apartment" },
+  { value: "house", label: "House" },
+  { value: "commercial", label: "Commercial" },
+  { value: "villa", label: "Villa" },
+  { value: "plot", label: "Plot / Land" },
+];
+
+const SORT_OPTIONS = [
+  { value: "", label: "Newest First" },
+  { value: "price_asc", label: "Price: Low → High" },
+  { value: "price_desc", label: "Price: High → Low" },
+];
+
+const ITEMS_PER_PAGE = 8;
+
+function PropertiesContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read params from URL
+  const qParam = searchParams.get("q") || "";
+  const categoryParam = searchParams.get("category") || "all";
+  const sortParam = searchParams.get("sort") || "";
+  const pageParam = parseInt(searchParams.get("page") || "1", 10);
+
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // 4 properties per page for visible pagination
+  const [searchInput, setSearchInput] = useState(qParam);
 
+  // Build the server-side query URL from current params
+  const buildApiUrl = useCallback((q: string, category: string, sort: string) => {
+    const url = new URL("http://localhost:8000/api/properties");
+    if (q) url.searchParams.set("q", q);
+    if (category && category !== "all") url.searchParams.set("category", category);
+    if (sort) url.searchParams.set("sort", sort);
+    return url.toString();
+  }, []);
+
+  // Fetch whenever URL params change (server does filtering + sorting)
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:8000/api/properties")
+    setSearchInput(qParam);
+
+    const apiUrl = buildApiUrl(qParam, categoryParam, sortParam);
+
+    fetch(apiUrl)
       .then((res) => {
         if (!res.ok) throw new Error("Server error");
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) {
-          setProperties(data);
-        }
+        if (Array.isArray(data)) setProperties(data);
       })
-      .catch((err) => {
-        console.error("Failed to fetch properties:", err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+      .catch((err) => console.error("Failed to fetch properties:", err.message))
+      .finally(() => setLoading(false));
+  }, [qParam, categoryParam, sortParam, buildApiUrl]);
 
-  // Pagination Math
-  const totalPages = Math.ceil(properties.length / itemsPerPage);
-  const paginatedProperties = properties.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Push new params to URL (server re-fetch via useEffect dependency)
+  const updateUrl = (overrides: Record<string, string>) => {
+    const params = new URLSearchParams();
+    const merged = { q: qParam, category: categoryParam, sort: sortParam, page: "1", ...overrides };
+    Object.entries(merged).forEach(([k, v]) => { if (v && v !== "all") params.set(k, v); });
+    router.push(`/properties?${params.toString()}`);
+  };
+
+  // Client-side pagination on filtered results
+  const totalPages = Math.ceil(properties.length / ITEMS_PER_PAGE);
+  const currentPage = Math.min(pageParam, totalPages || 1);
+  const paginated = properties.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    updateUrl({ page: String(page) });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUrl({ q: searchInput });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-6 py-12">
+
           {/* Page Header */}
-          <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl md:text-4xl font-bold text-primary dark:text-neutral-100 tracking-tight font-sans">
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-primary tracking-tight font-sans">
               All Properties
             </h1>
-            <p className="text-sm text-on-surface-variant mt-2 font-light">
+            <p className="text-sm text-on-surface-variant mt-1 font-light">
               Browse our complete catalog of premium and exclusive listings
             </p>
           </div>
 
-          {/* Skeletons Loading Grid */}
+          {/* Filter / Sort Toolbar */}
+          <div className="flex flex-col md:flex-row gap-3 mb-8 items-start md:items-center">
+            {/* Search Input */}
+            <form onSubmit={handleSearch} className="flex flex-1 gap-2">
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search by title or location…"
+                className="flex-1 px-4 py-2.5 bg-surface-container-lowest border border-outline-variant/40 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none"
+              />
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:opacity-90 transition-all cursor-pointer"
+              >
+                Search
+              </button>
+            </form>
+
+            {/* Category Filter */}
+            <select
+              value={categoryParam}
+              onChange={(e) => updateUrl({ category: e.target.value })}
+              className="px-4 py-2.5 bg-surface-container-lowest border border-outline-variant/40 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[160px]"
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+
+            {/* Sort Dropdown */}
+            <select
+              value={sortParam}
+              onChange={(e) => updateUrl({ sort: e.target.value })}
+              className="px-4 py-2.5 bg-surface-container-lowest border border-outline-variant/40 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[180px]"
+            >
+              {SORT_OPTIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Active filter pills */}
+          {(qParam || (categoryParam && categoryParam !== "all") || sortParam) && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {qParam && (
+                <span className="flex items-center gap-1 bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">
+                  Search: {qParam}
+                  <button onClick={() => updateUrl({ q: "" })} className="ml-1 hover:text-secondary cursor-pointer">✕</button>
+                </span>
+              )}
+              {categoryParam && categoryParam !== "all" && (
+                <span className="flex items-center gap-1 bg-secondary-container text-on-secondary-container text-xs font-semibold px-3 py-1 rounded-full capitalize">
+                  {categoryParam}
+                  <button onClick={() => updateUrl({ category: "all" })} className="ml-1 hover:opacity-70 cursor-pointer">✕</button>
+                </span>
+              )}
+              {sortParam && (
+                <span className="flex items-center gap-1 bg-surface-container border border-outline-variant/30 text-on-surface-variant text-xs font-semibold px-3 py-1 rounded-full">
+                  {SORT_OPTIONS.find(s => s.value === sortParam)?.label}
+                  <button onClick={() => updateUrl({ sort: "" })} className="ml-1 hover:opacity-70 cursor-pointer">✕</button>
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Loading Skeletons */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.02)] overflow-hidden border border-outline-variant/30 flex flex-col h-[380px]"
-                >
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/30 flex flex-col h-[380px]">
                   <div className="h-48 bg-gray-200 dark:bg-neutral-800 animate-pulse w-full" />
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex justify-between items-start mb-2 gap-2">
+                      <div className="flex justify-between mb-2 gap-2">
                         <div className="h-6 bg-gray-200 dark:bg-neutral-800 animate-pulse w-1/2 rounded-md" />
                         <div className="h-6 bg-gray-200 dark:bg-neutral-800 animate-pulse w-1/4 rounded-md" />
                       </div>
                       <div className="h-4 bg-gray-200 dark:bg-neutral-800 animate-pulse w-3/4 rounded-md mb-4" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-4 border-t border-outline-variant/10 pt-4 mb-4">
+                      <div className="flex gap-4 border-t border-outline-variant/10 pt-4 mb-4">
                         <div className="h-4 bg-gray-200 dark:bg-neutral-800 animate-pulse w-16 rounded-md" />
                         <div className="h-4 bg-gray-200 dark:bg-neutral-800 animate-pulse w-16 rounded-md" />
                       </div>
@@ -102,16 +209,19 @@ export default function PropertiesPage() {
                 </div>
               ))}
             </div>
-          ) : paginatedProperties.length > 0 ? (
+          ) : paginated.length > 0 ? (
             <>
-              {/* Properties Grid */}
+              <p className="text-xs text-on-surface-variant mb-4">
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, properties.length)} of <strong>{properties.length}</strong> results
+              </p>
+
+              {/* Property Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {paginatedProperties.map((property) => (
+                {paginated.map((property) => (
                   <div
                     key={property.id}
                     className="group bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.02)] hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-outline-variant/30 flex flex-col justify-between"
                   >
-                    {/* Card Image */}
                     <div className="h-48 overflow-hidden relative">
                       {property.isNew && (
                         <div className="absolute top-4 left-4 z-10 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -120,23 +230,21 @@ export default function PropertiesPage() {
                       )}
                       <Image
                         alt={property.title}
-                        src={property.image}
+                        src={property.image || "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4";
+                        }}
                       />
                     </div>
 
-                    {/* Card Content */}
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-start mb-2 gap-2">
-                          <h3 className="font-bold text-lg text-primary line-clamp-1">
-                            {property.title}
-                          </h3>
-                          <span className="text-secondary font-extrabold shrink-0">
-                            ${property.price.toLocaleString()}
-                          </span>
+                          <h3 className="font-bold text-lg text-primary line-clamp-1">{property.title}</h3>
+                          <span className="text-secondary font-extrabold shrink-0">${property.price.toLocaleString()}</span>
                         </div>
                         <p className="text-on-surface-variant text-sm flex items-center mb-4">
                           <MapPin className="w-4 h-4 mr-1 text-gray-400" />
@@ -155,10 +263,9 @@ export default function PropertiesPage() {
                             {property.baths} Baths
                           </span>
                         </div>
-
                         <Link
                           href={`/properties/${property.id}`}
-                          className="w-full border-2 border-primary text-primary font-bold py-2 rounded-xl hover:bg-primary hover:text-white transition-colors block text-center text-sm font-sans"
+                          className="w-full border-2 border-primary text-primary font-bold py-2 rounded-xl hover:bg-primary hover:text-white transition-colors block text-center text-sm"
                         >
                           View Details
                         </Link>
@@ -168,20 +275,18 @@ export default function PropertiesPage() {
                 ))}
               </div>
 
-              {/* Pagination Controls */}
+              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="mt-12 flex justify-center items-center gap-2">
-                  {/* Prev Button */}
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-4 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-sm font-semibold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary hover:text-white transition-all cursor-pointer"
+                    className="px-4 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-sm font-semibold text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary hover:text-white transition-all cursor-pointer"
                   >
                     Previous
                   </button>
 
-                  {/* Page numbers */}
-                  {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
@@ -195,11 +300,10 @@ export default function PropertiesPage() {
                     </button>
                   ))}
 
-                  {/* Next Button */}
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-sm font-semibold text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary hover:text-white transition-all cursor-pointer"
+                    className="px-4 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-sm font-semibold text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary hover:text-white transition-all cursor-pointer"
                   >
                     Next
                   </button>
@@ -208,7 +312,13 @@ export default function PropertiesPage() {
             </>
           ) : (
             <div className="text-center py-20 text-on-surface-variant font-light">
-              No properties found in our catalog.
+              <p className="text-lg mb-2">No properties found</p>
+              <p className="text-sm">
+                Try adjusting your filters or{" "}
+                <button onClick={() => router.push("/properties")} className="text-primary font-semibold underline cursor-pointer">
+                  clear all filters
+                </button>
+              </p>
             </div>
           )}
         </div>
@@ -216,5 +326,14 @@ export default function PropertiesPage() {
 
       <Footer />
     </div>
+  );
+}
+
+// Wrap in Suspense because useSearchParams() needs it in Next.js 16
+export default function PropertiesPage() {
+  return (
+    <Suspense>
+      <PropertiesContent />
+    </Suspense>
   );
 }

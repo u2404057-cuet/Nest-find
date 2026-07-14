@@ -1,13 +1,29 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { Button } from "@heroui/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
+  const locationRef = useRef<HTMLInputElement>(null);
+  const categoryRef = useRef<HTMLSelectElement>(null);
+  const priceRef = useRef<HTMLSelectElement>(null);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching properties...");
+    const params = new URLSearchParams();
+
+    const q = locationRef.current?.value.trim();
+    const category = categoryRef.current?.value;
+    const sort = priceRef.current?.value;
+
+    if (q) params.set("q", q);
+    if (category) params.set("category", category);
+    if (sort) params.set("sort", sort);
+
+    router.push(`/properties?${params.toString()}`);
   };
 
   return (
@@ -38,41 +54,49 @@ export default function Hero() {
           onSubmit={handleSearch}
           className="bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl p-2 md:p-3 flex flex-col md:flex-row items-stretch gap-2 max-w-4xl mx-auto border border-white/20"
         >
-          {/* Location field */}
+          {/* Location / keyword field */}
           <div className="flex-1 flex items-center px-4 py-2 border-b md:border-b-0 md:border-r border-gray-200">
             <span className="material-symbols-outlined text-primary mr-3 text-2xl">
               location_on
             </span>
             <input
+              ref={locationRef}
               type="text"
-              placeholder="Location"
+              placeholder="Location or keyword…"
               className="w-full bg-transparent border-none outline-none focus:ring-0 text-gray-800 placeholder:text-gray-400 font-sans text-base"
             />
           </div>
 
-          {/* Property Type field */}
+          {/* Property Type / category field */}
           <div className="flex-1 flex items-center px-4 py-2 border-b md:border-b-0 md:border-r border-gray-200">
             <span className="material-symbols-outlined text-primary mr-3 text-2xl">
               home
             </span>
-            <select className="w-full bg-transparent border-none outline-none focus:ring-0 text-gray-800 font-sans text-base appearance-none cursor-pointer">
-              <option value="">Property Type</option>
+            <select
+              ref={categoryRef}
+              className="w-full bg-transparent border-none outline-none focus:ring-0 text-gray-800 font-sans text-base appearance-none cursor-pointer"
+            >
+              <option value="">All Types</option>
               <option value="apartment">Apartment</option>
+              <option value="house">House</option>
+              <option value="commercial">Commercial</option>
               <option value="villa">Villa</option>
-              <option value="townhouse">Townhouse</option>
+              <option value="plot">Plot / Land</option>
             </select>
           </div>
 
-          {/* Price Range field */}
+          {/* Price Sort field */}
           <div className="flex-1 flex items-center px-4 py-2">
             <span className="material-symbols-outlined text-primary mr-3 text-2xl">
               payments
             </span>
-            <select className="w-full bg-transparent border-none outline-none focus:ring-0 text-gray-800 font-sans text-base appearance-none cursor-pointer">
-              <option value="">Price Range</option>
-              <option value="500k-1m">$500k - $1M</option>
-              <option value="1m-5m">$1M - $5M</option>
-              <option value="5m">$5M+</option>
+            <select
+              ref={priceRef}
+              className="w-full bg-transparent border-none outline-none focus:ring-0 text-gray-800 font-sans text-base appearance-none cursor-pointer"
+            >
+              <option value="">Price (default)</option>
+              <option value="price_asc">Price: Low → High</option>
+              <option value="price_desc">Price: High → Low</option>
             </select>
           </div>
 
