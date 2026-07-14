@@ -232,6 +232,7 @@ function PropertiesContent() {
                         alt={property.title}
                         src={property.image || "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"}
                         fill
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {

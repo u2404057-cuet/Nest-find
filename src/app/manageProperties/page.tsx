@@ -307,8 +307,10 @@ export default function ManagePropertiesPage() {
                         alt={item.title}
                         src={item.image || "/placeholder.jpg"}
                         fill
+                        unoptimized
                         sizes="(max-width: 1024px) 100vw, 30vw"
                         className="object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
                       />
                     </div>
 

@@ -16,6 +16,15 @@ import {
   Calendar,
   Gear
 } from "@gravity-ui/icons";
+import { toast } from "@heroui/react";
+
+interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  date: string;
+  comment: string;
+}
 
 interface Property {
   id: string;
@@ -57,7 +66,9 @@ export default function PropertyDetailPage({ params }: PageProps) {
   const { data: session } = useSession();
   const [property, setProperty] = useState<Property | null>(null);
   const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
 
@@ -104,6 +115,21 @@ export default function PropertyDetailPage({ params }: PageProps) {
         }
       })
       .catch((err) => console.error("Failed to fetch related properties:", err));
+
+    // Fetch property reviews
+    setReviewsLoading(true);
+    fetch(`http://localhost:8000/api/properties/${id}/reviews`)
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("Failed to load reviews");
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch reviews:", err))
+      .finally(() => setReviewsLoading(false));
   }, [id]);
 
   // Loading state
@@ -206,8 +232,10 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 alt={property.title}
                 fill
                 priority
+                unoptimized
                 sizes="(max-width: 1024px) 100vw, 75vw"
                 className="object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
               />
               {/* Image Control Badges */}
               <div className="absolute bottom-4 right-4 bg-primary/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
@@ -231,8 +259,10 @@ export default function PropertyDetailPage({ params }: PageProps) {
                     src={img}
                     alt={`Property image thumbnail ${index + 1}`}
                     fill
+                    unoptimized
                     sizes="(max-width: 1024px) 80px, 200px"
                     className="object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
                   />
                 </button>
               ))}
@@ -322,44 +352,46 @@ export default function PropertyDetailPage({ params }: PageProps) {
                     Reviews & Ratings
                   </h3>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-bold text-secondary">4.8</span>
-                    <span className="text-xs text-on-surface-variant">(2 reviews)</span>
+                    <span className="text-sm font-bold text-secondary">
+                      {reviews.length > 0
+                        ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1)
+                        : "0.0"}
+                    </span>
+                    <span className="text-xs text-on-surface-variant">
+                      ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+                    </span>
                   </div>
                 </div>
                 
-                <div className="space-y-6">
-                  {[
-                    {
-                      id: "1",
-                      author: "Sarah Jenkins",
-                      rating: 5,
-                      date: "June 12, 2026",
-                      comment: "Stunning property with exceptional finishes. The location is incredibly convenient and the neighborhood is very peaceful."
-                    },
-                    {
-                      id: "2",
-                      author: "David Miller",
-                      rating: 4,
-                      date: "May 28, 2026",
-                      comment: "Very spacious apartment. The bathrooms are modern and the natural light in the living room is fantastic. Highly recommended."
-                    }
-                  ].map((rev) => (
-                    <div key={rev.id} className="border-b border-outline-variant/10 pb-6 last:border-0 last:pb-0">
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <div>
-                          <h4 className="text-sm font-bold text-primary">{rev.author}</h4>
-                          <span className="text-[11px] text-on-surface-variant">{rev.date}</span>
+                {reviewsLoading ? (
+                  <div className="py-6 flex flex-col items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2" />
+                    <p className="text-xs text-on-surface-variant animate-pulse">Loading reviews...</p>
+                  </div>
+                ) : reviews.length > 0 ? (
+                  <div className="space-y-6">
+                    {reviews.map((rev) => (
+                      <div key={rev.id} className="border-b border-outline-variant/10 pb-6 last:border-0 last:pb-0">
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <div>
+                            <h4 className="text-sm font-bold text-primary">{rev.author}</h4>
+                            <span className="text-[11px] text-on-surface-variant">{rev.date}</span>
+                          </div>
+                          <div className="flex items-center gap-0.5 bg-secondary-container/20 px-2 py-0.5 rounded text-secondary font-bold text-xs">
+                            {rev.rating} ★
+                          </div>
                         </div>
-                        <div className="flex items-center gap-0.5 bg-secondary-container/20 px-2 py-0.5 rounded text-secondary font-bold text-xs">
-                          {rev.rating} ★
-                        </div>
+                        <p className="text-sm text-on-surface-variant font-normal leading-relaxed">
+                          {rev.comment}
+                        </p>
                       </div>
-                      <p className="text-sm text-on-surface-variant font-normal leading-relaxed">
-                        {rev.comment}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-on-surface-variant font-light text-sm">
+                    No reviews for this property yet.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -387,13 +419,23 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Simulated Inquiry Form */}
-                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <form
+                  className="space-y-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    const dateVal = formData.get("date");
+                    const timeVal = formData.get("time");
+                    toast(`Showing request scheduled for ${dateVal} at ${timeVal}!`);
+                  }}
+                >
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block">
                       Date
                     </label>
                     <input
                       type="date"
+                      name="date"
                       defaultValue="2026-07-15"
                       className="w-full px-4 py-2.5 bg-background border border-outline-variant/50 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none"
                     />
@@ -403,7 +445,10 @@ export default function PropertyDetailPage({ params }: PageProps) {
                     <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block">
                       Preferred Time
                     </label>
-                    <select className="w-full px-4 py-2.5 bg-background border border-outline-variant/50 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none">
+                    <select
+                      name="time"
+                      className="w-full px-4 py-2.5 bg-background border border-outline-variant/50 rounded-xl text-sm focus:ring-1 focus:ring-primary outline-none"
+                    >
                       <option>10:00 AM - 12:00 PM</option>
                       <option>02:00 PM - 04:00 PM</option>
                       <option>04:00 PM - 06:00 PM</option>
@@ -439,8 +484,10 @@ export default function PropertyDetailPage({ params }: PageProps) {
                         alt={item.title}
                         src={item.image || (item.images && item.images[0]) || "/placeholder.jpg"}
                         fill
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
                       />
                     </div>
                     {/* Card Content */}
