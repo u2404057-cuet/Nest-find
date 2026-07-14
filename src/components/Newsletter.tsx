@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@heroui/react";
+import { Button, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       console.log(`Subscribed: ${email}`);
-      alert("Thank you for subscribing!");
+      setIsOpen(true);
       setEmail("");
     }
   };
@@ -48,6 +49,23 @@ export default function Newsletter() {
           </Button>
         </form>
       </div>
+
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <ModalBackdrop />
+        <ModalContainer>
+          <ModalDialog>
+            <ModalHeader>Subscription Successful</ModalHeader>
+            <ModalBody>
+              Thank you for subscribing! You will receive property alerts soon.
+            </ModalBody>
+            <ModalFooter>
+              <Button className="bg-primary text-white" onPress={() => setIsOpen(false)}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalDialog>
+        </ModalContainer>
+      </Modal>
     </section>
   );
 }

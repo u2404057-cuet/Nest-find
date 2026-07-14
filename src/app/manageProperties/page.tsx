@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "@heroui/react";
+import { toast, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
 import { TrashBin, Plus } from "@gravity-ui/icons";
 import Image from "next/image";
 
@@ -20,11 +20,13 @@ interface Property {
 }
 
 export default function ManagePropertiesPage() {
+  const [isOpen, setIsOpen] = useState(false);
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Form states
   const [title, setTitle] = useState("");
@@ -114,11 +116,16 @@ export default function ManagePropertiesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this listing?")) return;
+  const confirmDelete = (id: string) => {
+    setDeleteId(id);
+    setIsOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/properties/${id}`, {
+      const res = await fetch(`http://localhost:8000/api/properties/${deleteId}`, {
         method: "DELETE"
       });
       if (!res.ok) throw new Error("Failed to delete property");
@@ -126,6 +133,9 @@ export default function ManagePropertiesPage() {
       fetchProperties();
     } catch (err: any) {
       toast(err.message || "Failed to delete property.");
+    } finally {
+      setDeleteId(null);
+      setIsOpen(false);
     }
   };
 
@@ -147,6 +157,28 @@ export default function ManagePropertiesPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-on-surface">
       <Navbar />
+
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <ModalBackdrop />
+        <ModalContainer>
+          <ModalDialog>
+            <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
+            <ModalBody>
+              <p className="text-on-surface-variant text-sm">
+                Are you sure you want to delete this listing? This action cannot be undone.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" onPress={() => setIsOpen(false)}>
+                Cancel
+              </Button>
+              <Button className="bg-red-600 text-white" onPress={() => { handleDelete(); }}>
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalDialog>
+        </ModalContainer>
+      </Modal>
 
       <main className="flex-grow max-w-7xl mx-auto px-6 py-12 w-full">
         <div className="flex justify-between items-start mb-8 pb-4 border-b border-outline-variant/20">
@@ -335,7 +367,7 @@ export default function ManagePropertiesPage() {
                         </span>
                         
                         <button
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => confirmDelete(item.id)}
                           className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer"
                         >
                           <TrashBin className="w-3.5 h-3.5" />
