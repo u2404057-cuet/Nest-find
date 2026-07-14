@@ -7,6 +7,7 @@ import { Bars, Xmark } from "@gravity-ui/icons";
 import logoImg from "@/assets/logo.png";
 import { useSession, authClient } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
+import { toast } from "@heroui/react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,11 +15,16 @@ export default function Navbar() {
   const user = sessionData?.user;
   const pathname = usePathname();
 
+  const isAgent = (user as any)?.role === "agent";
+
   const menuItems = [
     { name: "Home", href: "/" },
     { name: "Properties", href: "/properties" },
-    { name: "About", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "About", href: "/about" },
+    ...(isAgent ? [
+      { name: "Contact", href: "/contact" },
+      { name: "Manage", href: "/manageProperties" },
+    ] : []),
   ];
 
   return (
@@ -83,6 +89,7 @@ export default function Navbar() {
               <button
                 onClick={async () => {
                   await authClient.signOut();
+                  toast("Successfully logged out.");
                   window.location.href = "/";
                 }}
                 className="bg-surface-container hover:bg-red-50 hover:text-red-600 dark:bg-neutral-850 dark:hover:bg-red-950/40 dark:hover:text-red-400 text-on-surface-variant rounded-xl font-semibold active:scale-[0.98] transition-all px-4 py-2.5 text-xs cursor-pointer"
@@ -168,6 +175,7 @@ export default function Navbar() {
                   onClick={async () => {
                     setIsMenuOpen(false);
                     await authClient.signOut();
+                    toast("Successfully logged out.");
                     window.location.href = "/";
                   }}
                   className="w-full bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/50 rounded-xl font-semibold py-3 flex justify-center text-sm cursor-pointer"
