@@ -6,15 +6,17 @@ import Image from "next/image";
 import { Bars, Xmark } from "@gravity-ui/icons";
 import logoImg from "@/assets/logo.png";
 import { useSession, authClient } from "@/lib/auth-client";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: sessionData, isPending } = useSession();
   const user = sessionData?.user;
+  const pathname = usePathname();
 
   const menuItems = [
-    { name: "Home", href: "#", active: true },
-    { name: "Properties", href: "#" },
+    { name: "Home", href: "/" },
+    { name: "Properties", href: "/properties" },
     { name: "About", href: "#" },
     { name: "Contact", href: "#" },
   ];
@@ -36,19 +38,22 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-              className={`text-sm font-medium transition-colors hover:text-secondary ${
-                item.active
-                  ? "text-primary dark:text-neutral-100 border-b-2 border-secondary-container pb-1"
-                  : "text-on-surface-variant dark:text-neutral-400"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {menuItems.map((item, index) => {
+            const isActive = item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
+            return (
+              <Link
+                key={index}
+                href={item.href}
+                className={`text-sm font-semibold transition-colors hover:text-secondary ${
+                  isActive
+                    ? "text-primary dark:text-neutral-100 border-b-2 border-secondary-container pb-1"
+                    : "text-on-surface-variant dark:text-neutral-400"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Actions / CTA */}
@@ -114,16 +119,23 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-800 py-4 px-6 flex flex-col gap-4 animate-fade-in">
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="text-base font-semibold text-primary dark:text-neutral-200 hover:text-secondary py-1"
-            >
-              {item.name}
-            </Link>
-          ))}
+          {menuItems.map((item, index) => {
+            const isActive = item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
+            return (
+              <Link
+                key={index}
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-base font-semibold py-1 transition-colors ${
+                  isActive
+                    ? "text-secondary font-bold"
+                    : "text-primary dark:text-neutral-200 hover:text-secondary"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
           <div className="pt-2 border-t border-gray-50 dark:border-neutral-800">
             {isPending ? (
               <div className="w-full h-12 bg-surface-container animate-pulse rounded-xl" />
