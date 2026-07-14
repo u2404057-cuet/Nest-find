@@ -5,13 +5,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        // Allow any HTTPS image source — required because database properties
+        // can have images hosted on arbitrary domains (agent-uploaded URLs).
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "**",
         pathname: "/**",
       },
     ],
