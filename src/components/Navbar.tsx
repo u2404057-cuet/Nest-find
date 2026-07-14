@@ -76,7 +76,7 @@ export default function Navbar() {
                      {user?.name ? user.name[0] : (user?.email ? user.email[0] : "U")}
                    </div>
                  )}
-                 <span className="hidden sm:inline-block text-xs font-bold text-neutral-800 dark:text-neutral-200">
+                 <span className="hidden sm:inline-block text-xs font-bold text-primary">
                    {user?.name || user?.email}
                  </span>
                </div>
@@ -156,7 +156,7 @@ export default function Navbar() {
                      </div>
                    )}
                    <div className="flex flex-col">
-                     <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                     <span className="text-sm font-bold text-primary">
                        {user?.name || "User"}
                      </span>
                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
