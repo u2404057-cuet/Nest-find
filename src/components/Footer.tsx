@@ -10,11 +10,21 @@ export default function Footer() {
         {/* Branding & Socials */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <img
-              alt="NestFind Logo"
-              className="h-8 w-8 filter brightness-0 invert"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhuLUcHqIqU3iA1w28SsbeTDMTaUEj_UCXyraAcSxYcC2k-oJXKkdFIe5hWsW5eWpqKVJM1sPPXBeh1Os40XSBsKKLPvlw_99UeGwv1tBSclNn0qyyjue6zdKDX_FJNYyxMkKOelRhmOzf-cRvSHpSLya5nBU_VW7JHI22zcrX8Jpp7FxBxaNZTKQp3j57C3xdQ_aYTCfPSZ3gGbalxYhsgtEofGbonD1_0vZ-p4vN8FfvbuGNI5iqFQ"
-            />
+            {/* Inline SVG logo — no external dependency */}
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <rect width="32" height="32" rx="8" fill="white" fillOpacity="0.15" />
+              <path
+                d="M16 6L4 16H8V26H14V20H18V26H24V16H28L16 6Z"
+                fill="white"
+              />
+            </svg>
             <span className="text-xl font-bold tracking-tight text-white font-sans">
               NestFind
             </span>
