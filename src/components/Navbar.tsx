@@ -23,7 +23,8 @@ export default function Navbar() {
     { name: "About", href: "/about" },
     ...(isAgent ? [
       { name: "Contact", href: "/contact" },
-      { name: "Manage", href: "/manageProperties" },
+      { name: "Add Property", href: "/items/add" },
+      { name: "Manage", href: "/items/manage" },
     ] : []),
   ];
 
@@ -31,7 +32,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md shadow-[0_4px_20px_rgba(10,37,64,0.05)] border-b border-gray-100 dark:border-neutral-800">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand/Logo */}
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
           <Image
             alt="NestFind Logo"
             className="h-10 w-10 object-contain"
@@ -40,7 +41,7 @@ export default function Navbar() {
           <span className="font-bold text-xl text-primary dark:text-neutral-100 font-sans tracking-tight">
             NestFind
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">

@@ -26,7 +26,6 @@ function DeleteModal({
   onConfirm,
   onCancel,
 }: {
-  property: Property;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
