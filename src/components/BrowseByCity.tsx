@@ -52,7 +52,7 @@ export default function BrowseByCity() {
               className="group relative h-80 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow block"
               href="#"
             >
-              {/* Background Image */}
+              
               <Image
                 alt={city.name}
                 src={city.image}
@@ -60,10 +60,9 @@ export default function BrowseByCity() {
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 className="object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              {/* Overlay */}
+              
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
 
-              {/* Text info */}
               <div className="absolute bottom-6 left-6 text-white z-10">
                 <p className="text-xs uppercase tracking-widest text-secondary-container font-bold mb-1">
                   {city.count} Properties

@@ -36,11 +36,13 @@ const FALLBACK_AGENTS: Agent[] = [
   }
 ];
 
+import { API_BASE_URL } from "@/lib/api";
+
 export default function TopAgents() {
   const [agents, setAgents] = useState<Agent[]>(FALLBACK_AGENTS);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/agents")
+    fetch(`${API_BASE_URL}/api/agents`)
       .then((res) => {
         if (!res.ok) throw new Error("Server error");
         return res.json();

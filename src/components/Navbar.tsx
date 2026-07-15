@@ -31,7 +31,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/90 dark:bg-neutral-950/90 backdrop-blur-md shadow-[0_4px_20px_rgba(10,37,64,0.05)] border-b border-gray-100 dark:border-neutral-800">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Brand/Logo */}
+        
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
           <Image
             alt="NestFind Logo"
@@ -43,7 +43,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {menuItems.map((item, index) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname?.startsWith(item.href);
@@ -63,7 +62,6 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Actions / CTA */}
         <div className="flex items-center gap-4">
           {isPending ? (
             <div className="hidden sm:block w-24 h-10 bg-surface-container animate-pulse rounded-xl" />
@@ -109,7 +107,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden text-primary dark:text-neutral-200 focus:outline-none"
@@ -124,7 +121,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Panel */}
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-neutral-950 border-t border-gray-100 dark:border-neutral-800 py-4 px-6 flex flex-col gap-4 animate-fade-in">
           {menuItems.map((item, index) => {
@@ -199,4 +195,3 @@ export default function Navbar() {
     </nav>
   );
 }
-

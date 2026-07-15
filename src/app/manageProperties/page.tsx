@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { API_BASE_URL } from "@/lib/api";
 import { toast } from "@heroui/react";
 import { TrashBin, Plus } from "@gravity-ui/icons";
 import Image from "next/image";
@@ -28,7 +29,6 @@ export default function ManagePropertiesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Form states
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
@@ -39,11 +39,10 @@ export default function ManagePropertiesPage() {
 
   const fetchProperties = () => {
     setLoading(true);
-    // Fetch specifically for this agent if role matches
     const agentId = session?.user?.id;
     const url = agentId 
-      ? `http://localhost:8000/api/properties?agentId=${agentId}`
-      : "http://localhost:8000/api/properties";
+      ? `${API_BASE_URL}/api/properties?agentId=${agentId}`
+      : `${API_BASE_URL}/api/properties`;
 
     fetch(url)
       .then((res) => {
@@ -93,14 +92,13 @@ export default function ManagePropertiesPage() {
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/properties", {
+      const res = await fetch(`${API_BASE_URL}/api/properties`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error("Failed to create property");
       toast("Property created successfully!");
-      // Reset form
       setTitle("");
       setPrice("");
       setLocation("");
@@ -125,7 +123,7 @@ export default function ManagePropertiesPage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/properties/${deleteId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/properties/${deleteId}`, {
         method: "DELETE"
       });
       if (!res.ok) throw new Error("Failed to delete property");
@@ -199,7 +197,7 @@ export default function ManagePropertiesPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Create Property Form Column */}
+          
           <div className="lg:col-span-1 bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm">
             <h2 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
               <Plus className="w-5 h-5 text-secondary" />
@@ -322,7 +320,6 @@ export default function ManagePropertiesPage() {
             </form>
           </div>
 
-          {/* Active Listings Grid Column */}
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-bold text-primary mb-4">
               Your Active Properties ({properties.length})

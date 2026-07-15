@@ -52,7 +52,6 @@ export default function LoginPage() {
     const callback = getCallbackURL();
     try {
       if (data.isDemo) {
-        // Auto-register demo account if not exists
         try {
           await (signUp.email as any)({
             email: data.email,
@@ -65,7 +64,6 @@ export default function LoginPage() {
                 await performLogin(data.email, data.password, callback);
               },
               onError: async (ctx: any) => {
-                // If user already exists, just perform login
                 if (ctx.error.message?.includes("already exists") || ctx.error.code === "USER_ALREADY_EXISTS" || ctx.error.status === 400) {
                   await performLogin(data.email, data.password, callback);
                 } else {
@@ -77,7 +75,6 @@ export default function LoginPage() {
             }
           });
         } catch (signUpErr) {
-          // If signup fails structurally, fallback to direct login
           await performLogin(data.email, data.password, callback);
         }
       } else {
@@ -102,7 +99,6 @@ export default function LoginPage() {
 
     const callback = getCallbackURL();
 
-    // Step 1: Try a direct login first (fast path if account already exists)
     let loginSucceeded = false;
     await signIn.email({
       email,
@@ -116,7 +112,6 @@ export default function LoginPage() {
           router.push(callback);
         },
         onError: async () => {
-          // Step 2: Account may not exist — try creating it
           await (signUp.email as any)({
             email,
             password,
@@ -125,11 +120,9 @@ export default function LoginPage() {
             callbackURL: callback,
             fetchOptions: {
               onSuccess: async () => {
-                // After signup, log in
                 await performLogin(email, password, callback);
               },
               onError: async (ctx: any) => {
-                // Already exists but wrong password? Shouldn't happen, but handle gracefully
                 const msg = ctx.error.message || "Demo login failed. Please try again.";
                 setErrorMsg(msg);
                 toast(msg);
@@ -155,12 +148,11 @@ export default function LoginPage() {
 
   return (
     <div className="bg-background min-h-screen flex flex-col justify-between">
-      {/* Login Container */}
+      
       <main className="flex-grow flex items-center justify-center p-6">
-        {/* Auth Card */}
+        
         <div className="bg-surface-container-lowest w-full max-w-[440px] rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.05)] overflow-hidden p-6 md:p-8 border border-outline-variant/30 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(10,37,64,0.08)]">
           
-          {/* Logo Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 mb-4 relative">
               <Image
@@ -186,9 +178,8 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Login Form */}
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            {/* Email Field */}
+            
             <div className="space-y-1">
               <label
                 className="block text-xs font-semibold text-on-surface-variant px-1 uppercase tracking-wider"
@@ -210,7 +201,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Password Field */}
             <div className="space-y-1">
               <div className="flex justify-between items-center px-1">
                 <label
@@ -251,7 +241,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="pt-2">
               <button
                 type="submit"
@@ -262,7 +251,6 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Demo Logins */}
             <div className="mt-4 grid grid-cols-2 gap-3">
               <button
                 type="button"
@@ -281,7 +269,6 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* Social Links */}
           <div className="mt-6 flex flex-col items-center">
             <div className="w-full flex items-center mb-4">
               <div className="flex-1 h-[1px] bg-outline-variant/60"></div>
@@ -318,7 +305,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Register Link */}
           <div className="mt-8 text-center">
             <p className="text-xs text-on-surface-variant font-medium">
               Don&apos;t have an account?{" "}
@@ -333,7 +319,6 @@ export default function LoginPage() {
         </div>
       </main>
 
-      {/* Reduced Footer */}
       <footer className="w-full bg-surface-container-lowest py-4 px-6 border-t border-outline-variant/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2 text-xs">
           <p className="text-on-surface-variant font-medium">

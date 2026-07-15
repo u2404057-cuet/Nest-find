@@ -9,6 +9,7 @@ import { toast } from "@heroui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { TrashBin, Eye, MapPin, Plus, House, Magnifier } from "@gravity-ui/icons";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Property {
   id: string;
@@ -21,7 +22,6 @@ interface Property {
   image: string;
 }
 
-// ─── Inline delete-confirmation modal ───────────────────────────────────────
 function DeleteModal({
   onConfirm,
   onCancel,
@@ -58,7 +58,6 @@ function DeleteModal({
   );
 }
 
-// ─── Main page ───────────────────────────────────────────────────────────────
 export default function ManageItemsPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
@@ -72,7 +71,6 @@ export default function ManageItemsPage() {
   const [deleteTarget, setDeleteTarget] = useState<Property | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // ── Auth guard ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isPending && (!session || !isAgent)) {
       toast("Access denied: only agents can manage listings.");
@@ -80,11 +78,10 @@ export default function ManageItemsPage() {
     }
   }, [session, isAgent, isPending, router]);
 
-  // ── Fetch this agent's properties ──────────────────────────────────────────
   const loadProperties = useCallback(() => {
     if (!user) return;
     setLoading(true);
-    fetch(`http://localhost:8000/api/properties?agentId=${user.id}`)
+    fetch(`${API_BASE_URL}/api/properties?agentId=${user.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load properties");
         return res.json();
@@ -103,7 +100,6 @@ export default function ManageItemsPage() {
     loadProperties();
   }, [loadProperties]);
 
-  // ── Client-side search filter ──────────────────────────────────────────────
   useEffect(() => {
     const q = search.trim().toLowerCase();
     if (!q) {
@@ -119,13 +115,12 @@ export default function ManageItemsPage() {
     }
   }, [search, allProperties]);
 
-  // ── Delete handler ─────────────────────────────────────────────────────────
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
       const res = await fetch(
-        `http://localhost:8000/api/properties/${deleteTarget.id}`,
+        `${API_BASE_URL}/api/properties/${deleteTarget.id}`,
         { method: "DELETE" }
       );
       if (!res.ok) throw new Error("Failed to delete property");
@@ -144,7 +139,6 @@ export default function ManageItemsPage() {
     }
   };
 
-  // ── Loading / redirect state ───────────────────────────────────────────────
   if (isPending || (!session && !isAgent)) {
     return (
       <div className="flex flex-col min-h-screen bg-background text-on-surface">
@@ -172,7 +166,6 @@ export default function ManageItemsPage() {
 
         <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-10 w-full">
 
-          {/* ── Page header ─────────────────────────────────────────────── */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 mb-8">
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight leading-tight">
@@ -191,7 +184,6 @@ export default function ManageItemsPage() {
             </Link>
           </div>
 
-          {/* ── Stats bar ─────────────────────────────────────────────────── */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
               { label: "Total Listings", value: allProperties.length },
@@ -232,7 +224,6 @@ export default function ManageItemsPage() {
             ))}
           </div>
 
-          {/* ── Search bar ────────────────────────────────────────────────── */}
           <div className="relative mb-6">
             <Magnifier className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline/60 pointer-events-none" />
             <input
@@ -244,7 +235,6 @@ export default function ManageItemsPage() {
             />
           </div>
 
-          {/* ── Content ───────────────────────────────────────────────────── */}
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4].map((i) => (
@@ -257,7 +247,6 @@ export default function ManageItemsPage() {
           ) : properties.length > 0 ? (
             <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-[0_2px_16px_rgba(10,37,64,0.04)] overflow-hidden">
 
-              {/* ── Desktop table ─────────────────────────────────────────── */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
@@ -276,12 +265,11 @@ export default function ManageItemsPage() {
                         key={property.id}
                         className="hover:bg-surface/60 transition-colors group"
                       >
-                        {/* Row # */}
+                        
                         <td className="py-4 px-6 text-on-surface-variant/50 text-xs font-medium tabular-nums">
                           {String(idx + 1).padStart(2, "0")}
                         </td>
 
-                        {/* Image + Title */}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3.5">
                             <div className="w-14 h-11 relative rounded-lg overflow-hidden border border-outline-variant/25 shrink-0 bg-surface-container">
@@ -310,7 +298,6 @@ export default function ManageItemsPage() {
                           </div>
                         </td>
 
-                        {/* Location */}
                         <td className="py-4 px-6">
                           <span className="flex items-center gap-1.5 text-on-surface-variant">
                             <MapPin className="w-3.5 h-3.5 text-outline/50 shrink-0" />
@@ -318,12 +305,10 @@ export default function ManageItemsPage() {
                           </span>
                         </td>
 
-                        {/* Price */}
                         <td className="py-4 px-6 font-extrabold text-secondary tabular-nums">
                           {property.price ? property.price.toLocaleString() : "—"}
                         </td>
 
-                        {/* Specs */}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
                             <span className="bg-surface-container text-on-surface-variant text-[11px] font-semibold px-2.5 py-1 rounded-lg">
@@ -335,7 +320,6 @@ export default function ManageItemsPage() {
                           </div>
                         </td>
 
-                        {/* Actions */}
                         <td className="py-4 px-6 text-right">
                           <div className="flex items-center justify-end gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
                             <Link
@@ -360,11 +344,10 @@ export default function ManageItemsPage() {
                 </table>
               </div>
 
-              {/* ── Mobile card grid ──────────────────────────────────────── */}
               <div className="flex flex-col divide-y divide-outline-variant/10 md:hidden">
                 {properties.map((property, idx) => (
                   <div key={property.id} className="flex gap-4 p-4 items-start">
-                    {/* Thumbnail */}
+                    
                     <div className="w-18 h-14 relative rounded-xl overflow-hidden border border-outline-variant/25 shrink-0 bg-surface-container w-[72px] h-[56px]">
                       {property.image ? (
                         <Image
@@ -386,7 +369,6 @@ export default function ManageItemsPage() {
                       )}
                     </div>
 
-                    {/* Details */}
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] text-outline/50 font-medium mb-0.5">
                         #{String(idx + 1).padStart(2, "0")}
@@ -427,7 +409,6 @@ export default function ManageItemsPage() {
                 ))}
               </div>
 
-              {/* ── Table footer ──────────────────────────────────────────── */}
               <div className="px-6 py-3.5 border-t border-outline-variant/15 bg-surface-container/30 flex items-center justify-between">
                 <p className="text-xs text-on-surface-variant">
                   {properties.length} listing{properties.length !== 1 ? "s" : ""}
@@ -442,7 +423,7 @@ export default function ManageItemsPage() {
               </div>
             </div>
           ) : (
-            /* ── Empty state ──────────────────────────────────────────────── */
+            
             <div className="text-center py-24 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl">
               <div className="w-16 h-16 bg-surface-container rounded-2xl flex items-center justify-center mx-auto mb-5">
                 <House className="w-8 h-8 text-outline/40" />

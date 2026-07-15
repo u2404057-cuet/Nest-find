@@ -8,6 +8,7 @@ import { signUp, signIn } from "@/lib/auth-client";
 import Image from "next/image";
 import { Envelope, Lock, Eye, EyeClosed, Person, Briefcase, ArrowRight } from "@gravity-ui/icons";
 import logoImg from "@/assets/logo.png";
+import { toast } from "@heroui/react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -29,6 +30,13 @@ export default function RegisterPage() {
     setErrorMsg("");
     setLoading(true);
 
+    if (data.password.length < 8) {
+      setErrorMsg("Password must be at least 8 characters.");
+      setLoading(false);
+      toast("Password must be at least 8 characters.");
+      return;
+    }
+
     try {
       await (signUp.email as any)({
         email: data.email,
@@ -38,11 +46,14 @@ export default function RegisterPage() {
         callbackURL: "/",
         fetchOptions: {
           onError: (ctx: any) => {
-            setErrorMsg(ctx.error.message || "Registration failed. Please try again.");
+            const errMsg = ctx.error.message || "Registration failed. Please try again.";
+            setErrorMsg(errMsg);
             setLoading(false);
+            toast(errMsg);
           },
           onSuccess: () => {
             setLoading(false);
+            toast("Account created successfully!");
             router.push("/");
           }
         }
@@ -50,6 +61,7 @@ export default function RegisterPage() {
     } catch (err: any) {
       setErrorMsg("An unexpected error occurred. Please try again.");
       setLoading(false);
+      toast("An unexpected error occurred.");
     }
   };
 
@@ -66,17 +78,15 @@ export default function RegisterPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col justify-between relative overflow-hidden">
-      {/* Global Background Elements */}
+      
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary-fixed/30 blur-[120px] rounded-full"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-secondary-fixed/20 blur-[120px] rounded-full"></div>
       </div>
 
-      {/* Registration Content Shell */}
       <main className="flex-grow flex items-center justify-center px-4 py-16 relative z-10">
         <div className="w-full max-w-[480px] bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.05)] border border-outline-variant/30 transition-all">
           
-          {/* Branding Header */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 mb-4 relative">
               <Image
@@ -102,10 +112,8 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Registration Form */}
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             
-            {/* Role Selection (Segmented Control) */}
             <div className="space-y-1 pb-1">
               <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block px-1">
                 I am a...
@@ -154,7 +162,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Full Name */}
             <div className="space-y-1">
               <label
                 className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block px-1"
@@ -178,7 +185,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Email Address */}
             <div className="space-y-1">
               <label
                 className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block px-1"
@@ -202,7 +208,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Password */}
             <div className="space-y-1">
               <label
                 className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block px-1"
@@ -237,7 +242,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* CTA Button */}
             <button
               type="submit"
               disabled={loading}
@@ -248,7 +252,6 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Social Links */}
           <div className="mt-6 flex flex-col items-center">
             <div className="w-full flex items-center mb-4">
               <div className="flex-1 h-[1px] bg-outline-variant/60"></div>
@@ -296,7 +299,6 @@ export default function RegisterPage() {
         </div>
       </main>
 
-      {/* Simple Footer */}
       <footer className="relative z-10 py-4 border-t border-outline-variant/10 bg-surface-container-lowest">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-2 text-xs">
           <p className="text-on-surface-variant font-medium">

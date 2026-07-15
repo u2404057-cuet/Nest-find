@@ -18,13 +18,12 @@ function Counter({ target, suffix = "" }: CounterProps) {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
           let startTimestamp: number | null = null;
-          const duration = 2000; // 2 seconds
+          const duration = 2000;
 
           const step = (timestamp: number) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             
-            // Ease out quad formula
             const easeOutQuad = progress * (2 - progress);
             setCount(Math.floor(easeOutQuad * target));
 

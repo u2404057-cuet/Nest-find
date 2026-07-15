@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MapPin, LayoutCellsLarge, BroomMotion } from "@gravity-ui/icons";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Property {
   id: string;
@@ -40,7 +41,6 @@ function PropertiesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Read params from URL
   const qParam = searchParams.get("q") || "";
   const categoryParam = searchParams.get("category") || "all";
   const sortParam = searchParams.get("sort") || "";
@@ -50,16 +50,14 @@ function PropertiesContent() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState(qParam);
 
-  // Build the server-side query URL from current params
   const buildApiUrl = useCallback((q: string, category: string, sort: string) => {
-    const url = new URL("http://localhost:8000/api/properties");
+    const url = new URL(`${API_BASE_URL}/api/properties`);
     if (q) url.searchParams.set("q", q);
     if (category && category !== "all") url.searchParams.set("category", category);
     if (sort) url.searchParams.set("sort", sort);
     return url.toString();
   }, []);
 
-  // Fetch whenever URL params change (server does filtering + sorting)
   useEffect(() => {
     setLoading(true);
     setSearchInput(qParam);
@@ -78,7 +76,6 @@ function PropertiesContent() {
       .finally(() => setLoading(false));
   }, [qParam, categoryParam, sortParam, buildApiUrl]);
 
-  // Push new params to URL (server re-fetch via useEffect dependency)
   const updateUrl = (overrides: Record<string, string>) => {
     const params = new URLSearchParams();
     const merged = { q: qParam, category: categoryParam, sort: sortParam, page: "1", ...overrides };
@@ -86,7 +83,6 @@ function PropertiesContent() {
     router.push(`/properties?${params.toString()}`);
   };
 
-  // Client-side pagination on filtered results
   const totalPages = Math.ceil(properties.length / ITEMS_PER_PAGE);
   const currentPage = Math.min(pageParam, totalPages || 1);
   const paginated = properties.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -108,7 +104,6 @@ function PropertiesContent() {
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-6 py-12">
 
-          {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-primary tracking-tight font-sans">
               All Properties
@@ -118,9 +113,8 @@ function PropertiesContent() {
             </p>
           </div>
 
-          {/* Filter / Sort Toolbar */}
           <div className="flex flex-col md:flex-row gap-3 mb-8 items-start md:items-center">
-            {/* Search Input */}
+            
             <form onSubmit={handleSearch} className="flex flex-1 gap-2">
               <input
                 type="text"
@@ -137,7 +131,6 @@ function PropertiesContent() {
               </button>
             </form>
 
-            {/* Category Filter */}
             <select
               value={categoryParam}
               onChange={(e) => updateUrl({ category: e.target.value })}
@@ -148,7 +141,6 @@ function PropertiesContent() {
               ))}
             </select>
 
-            {/* Sort Dropdown */}
             <select
               value={sortParam}
               onChange={(e) => updateUrl({ sort: e.target.value })}
@@ -160,7 +152,6 @@ function PropertiesContent() {
             </select>
           </div>
 
-          {/* Active filter pills */}
           {(qParam || (categoryParam && categoryParam !== "all") || sortParam) && (
             <div className="flex flex-wrap gap-2 mb-6">
               {qParam && (
@@ -184,7 +175,6 @@ function PropertiesContent() {
             </div>
           )}
 
-          {/* Loading Skeletons */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
@@ -215,7 +205,6 @@ function PropertiesContent() {
                 Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, properties.length)} of <strong>{properties.length}</strong> results
               </p>
 
-              {/* Property Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {paginated.map((property) => (
                   <div
@@ -276,7 +265,6 @@ function PropertiesContent() {
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="mt-12 flex justify-center items-center gap-2">
                   <button
@@ -330,7 +318,6 @@ function PropertiesContent() {
   );
 }
 
-// Wrap in Suspense because useSearchParams() needs it in Next.js 16
 export default function PropertiesPage() {
   return (
     <Suspense>

@@ -46,13 +46,13 @@ export default function HowItWorks() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         {STEPS.map((step, idx) => (
           <div key={idx} className="text-center group flex flex-col items-center">
-            {/* Icon Wrapper */}
+            
             <div className="w-20 h-20 bg-primary-fixed dark:bg-neutral-800 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
               {step.icon === "search" && <Magnifier className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
               {step.icon === "calendar" && <Calendar className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
               {step.icon === "key" && <Key className="w-8 h-8 text-primary dark:text-primary-fixed-dim" />}
             </div>
-            {/* Step text */}
+            
             <h3 className="text-xl font-bold text-primary dark:text-neutral-200 mb-3">
               {step.title}
             </h3>

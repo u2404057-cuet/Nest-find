@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { API_BASE_URL } from "@/lib/api";
 import {
   MapPin,
   ChevronLeft,
@@ -78,10 +79,9 @@ export default function PropertyDetailPage({ params }: PageProps) {
       : (property.location.address || `${property.location.area || ""}, ${property.location.city || ""}`))
     : "";
 
-  // Fetch property details & related items
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:8000/api/properties/${id}`)
+    fetch(`${API_BASE_URL}/api/properties/${id}`)
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) {
@@ -103,8 +103,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
         setLoading(false);
       });
 
-    // Fetch related properties
-    fetch("http://localhost:8000/api/properties")
+    fetch(`${API_BASE_URL}/api/properties`)
       .then((res) => {
         if (res.ok) return res.json();
       })
@@ -116,9 +115,8 @@ export default function PropertyDetailPage({ params }: PageProps) {
       })
       .catch((err) => console.error("Failed to fetch related properties:", err));
 
-    // Fetch property reviews
     setReviewsLoading(true);
-    fetch(`http://localhost:8000/api/properties/${id}/reviews`)
+    fetch(`${API_BASE_URL}/api/properties/${id}/reviews`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("Failed to load reviews");
@@ -132,7 +130,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
       .finally(() => setReviewsLoading(false));
   }, [id]);
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen bg-background text-on-surface">
@@ -148,7 +145,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
     );
   }
 
-  // Error/Not found state
   if (error || (!loading && !property)) {
     return (
       <div className="flex flex-col min-h-screen bg-background text-on-surface">
@@ -172,7 +168,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
     );
   }
 
-  // Loaded Details View
   return (
     <div className="flex flex-col min-h-screen bg-background text-on-surface transition-colors duration-200">
       <Navbar />
@@ -183,7 +178,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
         </div>
       ) : (
         <main className="flex-grow py-8 max-w-7xl mx-auto px-6 w-full">
-          {/* Back button and navigation breadcrumb */}
+          
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <Link
               href="/properties"
@@ -202,7 +197,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Title & Price Section */}
           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8">
             <div>
               <h1 className="text-2xl md:text-4xl font-extrabold text-primary tracking-tight leading-tight">
@@ -223,9 +217,8 @@ export default function PropertyDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Image Gallery Block */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-10">
-            {/* Active Display */}
+            
             <div className="lg:col-span-3 h-[300px] sm:h-[450px] relative rounded-2xl overflow-hidden shadow-sm border border-outline-variant/30">
               <Image
                 src={property.images[activeImage] || "/placeholder.jpg"}
@@ -237,13 +230,12 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 className="object-cover"
                 onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
               />
-              {/* Image Control Badges */}
+              
               <div className="absolute bottom-4 right-4 bg-primary/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
                 {activeImage + 1} / {property.images.length}
               </div>
             </div>
 
-            {/* Thumbnail Selectors */}
             <div className="lg:col-span-1 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:max-h-[450px] pb-2 lg:pb-0 scrollbar-thin scrollbar-thumb-neutral-250 scrollbar-track-transparent">
               {property.images.map((img, index) => (
                 <button
@@ -269,11 +261,10 @@ export default function PropertyDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Details & Specs Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            {/* Left Column: Description & Specs */}
+            
             <div className="lg:col-span-2 space-y-8">
-              {/* Key Specs Grid */}
+              
               <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
                 <div className="space-y-1">
                   <span className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider block">
@@ -313,7 +304,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Description */}
               <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
                 <h3 className="text-xl font-bold text-primary mb-4 border-b border-outline-variant/10 pb-3">
                   Property Description
@@ -323,7 +313,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* Amenities */}
               <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
                 <h3 className="text-xl font-bold text-primary mb-6 border-b border-outline-variant/10 pb-3">
                   Amenities & Facilities
@@ -345,7 +334,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Reviews & Ratings */}
               <div className="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
                 <div className="flex justify-between items-center mb-6 border-b border-outline-variant/10 pb-3">
                   <h3 className="text-xl font-bold text-primary">
@@ -395,15 +383,13 @@ export default function PropertyDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Right Column: Contact Widget */}
             <div className="space-y-6">
-              {/* Agent card widget */}
+              
               <div className="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] sticky top-24">
                 <h3 className="text-lg font-bold text-primary mb-5 pb-3 border-b border-outline-variant/10">
                   Schedule a Showing
                 </h3>
                 
-                {/* Agent details */}
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-14 h-14 bg-secondary-container rounded-full flex items-center justify-center font-bold text-white text-lg">
                     A
@@ -418,7 +404,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                {/* Simulated Inquiry Form */}
                 <form
                   className="space-y-4"
                   onSubmit={(e) => {
@@ -466,7 +451,6 @@ export default function PropertyDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Related Items Section */}
           {relatedProperties.length > 0 && (
             <div className="mt-16 pt-10 border-t border-outline-variant/20">
               <h3 className="text-2xl font-bold text-primary mb-8">
@@ -478,7 +462,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
                     key={item.id}
                     className="group bg-surface-container-lowest rounded-2xl shadow-[0_4px_20px_rgba(10,37,64,0.02)] hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-outline-variant/30 flex flex-col justify-between"
                   >
-                    {/* Card Image */}
+                    
                     <div className="h-44 overflow-hidden relative">
                       <Image
                         alt={item.title}
@@ -490,7 +474,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
                         onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560185127-6ed189bf02f4"; }}
                       />
                     </div>
-                    {/* Card Content */}
+                    
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex justify-between items-start mb-2 gap-2">

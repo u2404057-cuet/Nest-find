@@ -40,11 +40,13 @@ const FALLBACK_TESTIMONIALS: Testimonial[] = [
   }
 ];
 
+import { API_BASE_URL } from "@/lib/api";
+
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(FALLBACK_TESTIMONIALS);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/testimonials")
+    fetch(`${API_BASE_URL}/api/testimonials`)
       .then((res) => {
         if (!res.ok) throw new Error("Server error");
         return res.json();
@@ -73,7 +75,7 @@ export default function Testimonials() {
               className="bg-white dark:bg-neutral-900 p-8 rounded-2xl shadow-sm border-b-4 border-secondary flex flex-col justify-between"
             >
               <div>
-                {/* Stars */}
+                
                 <div className="flex text-secondary-container mb-4 gap-0.5">
                   {Array.from({ length: t.stars }).map((_, i) => (
                     <StarFill
