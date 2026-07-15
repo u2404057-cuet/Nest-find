@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/auth-client";
+import { signIn, signUp } from "@/lib/auth-client";
 import Image from "next/image";
 import { Envelope, Lock, Eye, EyeClosed } from "@gravity-ui/icons";
 import logoImg from "@/assets/logo.png";
+import { toast } from "@heroui/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,36 +17,136 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const getCallbackURL = () => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("callbackURL") || "/";
+    }
+    return "/";
+  };
+
+  const performLogin = async (emailStr: string, passwordStr: string, callback: string) => {
+    await signIn.email({
+      email: emailStr,
+      password: passwordStr,
+      callbackURL: callback,
+      fetchOptions: {
+        onError: (ctx) => {
+          const errMsg = ctx.error.message || "Invalid credentials. Please try again.";
+          setErrorMsg(errMsg);
+          setLoading(false);
+          toast(errMsg);
+        },
+        onSuccess: () => {
+          setLoading(false);
+          toast("Login successful!");
+          router.push(callback);
+        }
+      }
+    });
+  };
+
   const onSubmit = async (data: any) => {
     setErrorMsg("");
     setLoading(true);
+    const callback = getCallbackURL();
     try {
-      await signIn.email({
-        email: data.email,
-        password: data.password,
-        callbackURL: "/",
-        fetchOptions: {
-          onError: (ctx) => {
-            setErrorMsg(ctx.error.message || "Invalid credentials. Please try again.");
-            setLoading(false);
-          },
-          onSuccess: () => {
-            setLoading(false);
-            router.push("/");
-          }
+      if (data.isDemo) {
+        // Auto-register demo account if not exists
+        try {
+          await (signUp.email as any)({
+            email: data.email,
+            password: data.password,
+            name: data.demoName,
+            role: data.demoRole,
+            callbackURL: callback,
+            fetchOptions: {
+              onSuccess: async () => {
+                await performLogin(data.email, data.password, callback);
+              },
+              onError: async (ctx: any) => {
+                // If user already exists, just perform login
+                if (ctx.error.message?.includes("already exists") || ctx.error.code === "USER_ALREADY_EXISTS" || ctx.error.status === 400) {
+                  await performLogin(data.email, data.password, callback);
+                } else {
+                  setErrorMsg(ctx.error.message || "Demo login setup failed.");
+                  setLoading(false);
+                  toast(ctx.error.message || "Demo login setup failed.");
+                }
+              }
+            }
+          });
+        } catch (signUpErr) {
+          // If signup fails structurally, fallback to direct login
+          await performLogin(data.email, data.password, callback);
         }
-      });
+      } else {
+        await performLogin(data.email, data.password, callback);
+      }
     } catch (err: any) {
       setErrorMsg("An unexpected error occurred. Please try again.");
       setLoading(false);
+      toast("An unexpected error occurred.");
     }
+  };
+
+  const handleDemoLogin = async (role: "buyer" | "agent") => {
+    const email = `${role}@nestfind.com`;
+    const password = "Password123";
+    const name = `Demo ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+
+    setValue("email", email);
+    setValue("password", password);
+    setErrorMsg("");
+    setLoading(true);
+
+    const callback = getCallbackURL();
+
+    // Step 1: Try a direct login first (fast path if account already exists)
+    let loginSucceeded = false;
+    await signIn.email({
+      email,
+      password,
+      callbackURL: callback,
+      fetchOptions: {
+        onSuccess: () => {
+          loginSucceeded = true;
+          setLoading(false);
+          toast("Login successful!");
+          router.push(callback);
+        },
+        onError: async () => {
+          // Step 2: Account may not exist — try creating it
+          await (signUp.email as any)({
+            email,
+            password,
+            name,
+            role,
+            callbackURL: callback,
+            fetchOptions: {
+              onSuccess: async () => {
+                // After signup, log in
+                await performLogin(email, password, callback);
+              },
+              onError: async (ctx: any) => {
+                // Already exists but wrong password? Shouldn't happen, but handle gracefully
+                const msg = ctx.error.message || "Demo login failed. Please try again.";
+                setErrorMsg(msg);
+                toast(msg);
+                setLoading(false);
+              }
+            }
+          });
+        }
+      }
+    });
   };
 
   const handleSocialLogin = async (provider: "google") => {
     try {
       await signIn.social({
         provider,
-        callbackURL: "/",
+        callbackURL: getCallbackURL(),
       });
     } catch (err) {
       console.error("Social login failed", err);
@@ -158,6 +259,24 @@ export default function LoginPage() {
                 className="w-full bg-secondary-container text-primary font-semibold py-3.5 rounded-xl shadow-sm hover:brightness-105 active:scale-[0.98] transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {loading ? "Logging in..." : "Login"}
+              </button>
+            </div>
+
+            {/* Demo Logins */}
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleDemoLogin("buyer")}
+                className="py-2.5 px-4 bg-gray-50 border border-gray-200 hover:bg-primary-container/20 hover:border-primary/30 text-xs font-semibold text-primary rounded-xl cursor-pointer transition-all active:scale-[0.98]"
+              >
+                Demo Buyer
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoLogin("agent")}
+                className="py-2.5 px-4 bg-gray-50 border border-gray-200 hover:bg-primary-container/20 hover:border-primary/30 text-xs font-semibold text-primary rounded-xl cursor-pointer transition-all active:scale-[0.98]"
+              >
+                Demo Agent
               </button>
             </div>
           </form>
