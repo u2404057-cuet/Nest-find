@@ -160,18 +160,18 @@ export default function ManagePropertiesPage() {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-2xl w-full max-w-sm p-7 text-center">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7 text-center">
             <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
               <TrashBin className="w-7 h-7 text-red-500" />
             </div>
-            <h3 className="text-lg font-bold text-primary mb-1">Delete Listing?</h3>
-            <p className="text-sm text-on-surface-variant font-light mb-6 leading-relaxed">
-              This action cannot be undone. The listing will be permanently removed.
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Listing?</h3>
+            <p className="text-sm text-gray-500 font-light mb-6 leading-relaxed">
+              Are you sure you want to permanently delete this listing? This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex-1 py-2.5 border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
+                className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
