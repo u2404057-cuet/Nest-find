@@ -147,17 +147,10 @@ Nest-find/
 - [ ] In-app messaging between buyers and agents
 - [ ] Map view for search results
 
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](https://github.com/u2404057-cuet/Nest-find/issues).
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ## 👤 Author
 
-**Rahimul Islam**
+**Rahimul Hoque**
 Full-Stack Developer · CSE Student at CUET
 
 - GitHub: [@u2404057-cuet](https://github.com/u2404057-cuet)
