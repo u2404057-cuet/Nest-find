@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
+import { toast } from "@heroui/react";
 import { TrashBin, Plus } from "@gravity-ui/icons";
 import Image from "next/image";
 
@@ -158,29 +158,33 @@ export default function ManagePropertiesPage() {
     <div className="flex flex-col min-h-screen bg-background text-on-surface">
       <Navbar />
 
-      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Button className="hidden">Hidden Trigger</Button>
-        <ModalBackdrop variant="blur">
-          <ModalContainer placement="center">
-            <ModalDialog>
-              <ModalHeader className="flex flex-col gap-1 text-primary">Confirm Deletion</ModalHeader>
-              <ModalBody>
-                <p className="text-on-surface-variant text-sm">
-                  Are you sure you want to delete this listing? This action cannot be undone.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="ghost" onPress={() => setIsOpen(false)}>
-                  Cancel
-                </Button>
-                <Button className="bg-red-600 text-white" onPress={() => { handleDelete(); }}>
-                  Delete
-                </Button>
-              </ModalFooter>
-            </ModalDialog>
-          </ModalContainer>
-        </ModalBackdrop>
-      </Modal>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-2xl w-full max-w-sm p-7 text-center">
+            <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-5">
+              <TrashBin className="w-7 h-7 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-primary mb-1">Delete Listing?</h3>
+            <p className="text-sm text-on-surface-variant font-light mb-6 leading-relaxed">
+              This action cannot be undone. The listing will be permanently removed.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="flex-1 py-2.5 border border-outline-variant rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete()}
+                className="flex-1 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="flex-grow max-w-7xl mx-auto px-6 py-12 w-full">
         <div className="flex justify-between items-start mb-8 pb-4 border-b border-outline-variant/20">
